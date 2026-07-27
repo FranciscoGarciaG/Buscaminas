@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Fertilizantes para el Bienestar 2026</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js and plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <!-- html2pdf Library for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    <!-- Top Control Bar (State and Date Selectors + PDF Export) -->
+    <header class="control-bar">
+        <div class="control-container">
+            <div class="control-group">
+                <label for="state-select"><strong>SELECCIONAR ESTADO / VISTA:</strong></label>
+                <select id="state-select" class="select-input">
+                    <option value="NACIONAL" selected>🇲🇽 A NIVEL NACIONAL</option>
+                    <option value="MORELOS">MORELOS</option>
+                    <!-- States dynamically populated -->
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="date-picker"><strong>FECHA DE ATENCIÓN:</strong></label>
+                <input type="date" id="date-picker" class="date-input" value="2026-07-23">
+            </div>
+            <div class="control-group">
+                <button id="btn-export-pdf" class="btn-pdf">📄 Descargar PDF</button>
+            </div>
+            <div class="control-group info-pill">
+                <span id="data-status">🟢 Datos 2026 Cargados</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Report Canvas Container -->
+    <main class="report-wrapper">
+        <div class="report-paper">
+            <!-- Background Image overlay container -->
+            <div class="bg-overlay"></div>
+
+            <!-- Official Header -->
+            <div class="official-header">
+                <div class="header-logo-left">
+                    <div class="seal-logo">
+                        <span class="seal-text-top">GOBIERNO DE MÉXICO</span>
+                        <span class="seal-text-sub">AGRICULTURA</span>
+                    </div>
+                </div>
+                <div class="header-logo-right">
+                    <div class="program-title">
+                        <span class="fert-title">Fertilizantes</span>
+                        <span class="fert-sub">para el Bienestar</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header Banner -->
+            <div class="main-banner">
+                <h1 id="banner-title">ENTREGA DE FERTILIZANTE A NIVEL NACIONAL 2026</h1>
+                <h2 id="banner-subtitle">AL 23/07/2026</h2>
+            </div>
+
+            <!-- SECTION 1: METAS (Banner layout replacing PUBLICADOS) -->
+            <section class="section-meta">
+                <div class="meta-header-banner">METAS</div>
+                <div class="meta-cards-grid">
+                    <!-- Derechohabientes Meta -->
+                    <div class="meta-card card-gold">
+                        <div class="card-title">DERECHOHABIENTES</div>
+                        <div class="card-body">
+                            <div class="card-icon people-icon">👥</div>
+                            <div class="card-value" id="meta-derechohabientes">4,249,198</div>
+                        </div>
+                    </div>
+                    <!-- Fertilizante UREA Meta -->
+                    <div class="meta-card card-darkgreen">
+                        <div class="card-title">FERTILIZANTE UREA</div>
+                        <div class="card-body">
+                            <div class="card-icon bag-icon">🌾</div>
+                            <div class="card-value-stack">
+                                <span class="val-big" id="meta-urea">1,184,404.500</span>
+                                <span class="val-unit">TONELADAS</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fertilizante DAP Meta -->
+                    <div class="meta-card card-maroon">
+                        <div class="card-title">FERTILIZANTE DAP</div>
+                        <div class="card-body">
+                            <div class="card-icon bag-icon">🌾</div>
+                            <div class="card-value-stack">
+                                <span class="val-big" id="meta-dap">875,454.400</span>
+                                <span class="val-unit">TONELADAS</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Hectareas Meta -->
+                    <div class="meta-card card-deepgreen">
+                        <div class="card-title">HECTAREAS</div>
+                        <div class="card-body">
+                            <div class="card-icon field-icon">🌱</div>
+                            <div class="card-value" id="meta-hectareas">7,034,320</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: AVANCE DE ENTREGAS -->
+            <section class="section-avance">
+                <div class="avance-header-banner">AVANCE DE ENTREGAS</div>
+                <div class="avance-cards-grid">
+                    <!-- Derechohabientes Atendidos -->
+                    <div class="avance-card">
+                        <div class="avance-card-title">DERECHOHABIENTES ATENDIDOS</div>
+                        <div class="donut-chart-box">
+                            <canvas id="chart-derechohabientes"></canvas>
+                        </div>
+                        <div class="avance-card-footer">
+                            El % equivale a: <strong id="val-atendidos">1,998,968</strong> derechohabientes.
+                        </div>
+                    </div>
+
+                    <!-- Producto Entregado -->
+                    <div class="avance-card card-double-donut">
+                        <div class="avance-card-title">PRODUCTO ENTREGADO</div>
+                        <div class="double-donut-flex">
+                            <div class="single-donut-sub">
+                                <div class="donut-chart-box small-box">
+                                    <canvas id="chart-dap"></canvas>
+                                </div>
+                                <div class="sub-footer">
+                                    El % equivale a: <strong id="val-dap">378,967.10</strong> ton de DAP.
+                                </div>
+                            </div>
+                            <div class="single-donut-sub">
+                                <div class="donut-chart-box small-box">
+                                    <canvas id="chart-urea"></canvas>
+                                </div>
+                                <div class="sub-footer">
+                                    El % equivale a: <strong id="val-urea">519,880.400</strong> ton de UREA.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HA Atendidas -->
+                    <div class="avance-card">
+                        <div class="avance-card-title">HA ATENDIDAS</div>
+                        <div class="donut-chart-box">
+                            <canvas id="chart-ha"></canvas>
+                        </div>
+                        <div class="avance-card-footer">
+                            El % equivale a: <strong id="val-ha">3,518,036</strong>HA
+                        </div>
+                    </div>
+
+                    <!-- Derechohabientes Atendidos el [Fecha] -->
+                    <div class="avance-card card-fecha-atencion">
+                        <div class="date-atencion-num" id="val-atendidos-fecha">0</div>
+                        <div class="avance-card-title date-title">
+                            DERECHOHABIENTES ATENDIDOS EL
+                            <span id="label-fecha-atencion">23/07/2026</span>
+                        </div>
+                        <div class="date-people-icon">👥</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: TRI-COLUMN BREAKDOWN -->
+            <section class="section-tri">
+                <!-- Genero -->
+                <div class="tri-card card-genero">
+                    <div class="tri-title">ATENCION DE DERECHOHABIENTES POR GENERO</div>
+                    <div class="pie-chart-container">
+                        <canvas id="chart-genero"></canvas>
+                    </div>
+                    <div class="genero-legend">
+                        <div class="legend-item">
+                            <span class="icon-man">🚶‍♂️</span>
+                            <div class="legend-text">
+                                <span class="lbl-gender">HOMBRES</span>
+                                <strong class="num-gender" id="val-hombres">1,310,400</strong>
+                            </div>
+                        </div>
+                        <div class="legend-item">
+                            <span class="icon-woman">🚶‍♀️</span>
+                            <div class="legend-text">
+                                <span class="lbl-gender">MUJERES</span>
+                                <strong class="num-gender" id="val-mujeres">688,568</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cultivos Table -->
+                <div class="tri-card card-cultivos">
+                    <div class="tri-title title-table">TIPOS DE CULTIVOS POR PRODUCTOR Y SUPERFICIE APOYADA (HA)</div>
+                    <div class="table-container">
+                        <table class="cultivos-table">
+                            <thead>
+                                <tr>
+                                    <th>CULTIVO</th>
+                                    <th>DERECHOHABIENTES</th>
+                                    <th>SUPERFICIE (HA)</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cultivos-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td>TOTAL:</td>
+                                    <td id="tbl-total-prod">1,998,968</td>
+                                    <td id="tbl-total-sup">3,518,036</td>
+                                    <td>100%</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Edad Chart -->
+                <div class="tri-card card-edades">
+                    <div class="tri-title">RANGO DE EDADES DE LOS DERECHOHABIENTES BENEFICIARIOS</div>
+                    <div class="line-chart-container">
+                        <canvas id="chart-edades"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: ENTREGAS -->
+            <section class="section-entregas">
+                <div class="entregas-card">
+                    <div class="entregas-title">ENTREGAS</div>
+                    <div class="entregas-chart-container">
+                        <canvas id="chart-entregas"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

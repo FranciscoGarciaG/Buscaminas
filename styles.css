@@ -1,0 +1,742 @@
+/* Reset and Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Montserrat', 'Roboto', sans-serif;
+    background-color: #c5bca8;
+    background-image: radial-gradient(#a39983 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding-bottom: 40px;
+}
+
+/* Control Bar Header */
+.control-bar {
+    width: 100%;
+    background: #0f2b23;
+    color: #ffffff;
+    padding: 12px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.control-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+}
+
+.select-input, .date-input {
+    background-color: #1c4538;
+    color: #ffffff;
+    border: 1px solid #b59a57;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.select-input:hover, .date-input:hover {
+    background-color: #245747;
+    border-color: #d4af37;
+}
+
+.btn-pdf {
+    background: linear-gradient(135deg, #b59a57, #8c7336);
+    color: #ffffff;
+    border: 1px solid #e2c982;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-pdf:hover {
+    background: linear-gradient(135deg, #c9aa63, #a18440);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.info-pill {
+    background: rgba(181, 154, 87, 0.2);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #b59a57;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Report Wrapper Canvas */
+.report-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto 0;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+.report-paper {
+    position: relative;
+    background-color: #dcd4c3;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    padding: 20px 24px;
+    border: 1px solid #b8ac97;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.report-paper > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Header Official Branding */
+.official-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding: 0 4px;
+    width: 100%;
+}
+
+.seal-logo {
+    display: flex;
+    flex-direction: column;
+}
+
+.seal-text-top {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #691c32; /* Official Gob Red */
+    letter-spacing: -0.5px;
+}
+
+.seal-text-sub {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #13382c;
+}
+
+.program-title {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.fert-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #13382c;
+    line-height: 1;
+}
+
+.fert-sub {
+    font-size: 1.05rem;
+    font-style: italic;
+    color: #b59a57;
+    font-weight: 600;
+}
+
+/* Banner Title */
+.main-banner {
+    background-color: #0d3629;
+    color: #ffffff;
+    text-align: center;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    width: 100%;
+}
+
+.main-banner h1 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.main-banner h2 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #e2c982;
+}
+
+/* SECTION 1: METAS */
+.section-meta {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.meta-header-banner {
+    background-color: #0d3629;
+    color: #ffffff;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 800;
+    padding: 7px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+    width: 100%;
+}
+
+.meta-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    width: 100%;
+}
+
+.meta-card {
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 90px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.card-gold { background: linear-gradient(135deg, #a38148, #bd9a5a); }
+.card-darkgreen { background: linear-gradient(135deg, #2b453a, #1a332a); }
+.card-maroon { background: linear-gradient(135deg, #591d28, #3d121a); }
+.card-deepgreen { background: linear-gradient(135deg, #0d3629, #08241b); }
+
+.meta-card .card-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.meta-card .card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.card-icon {
+    font-size: 1.8rem;
+    opacity: 0.9;
+}
+
+.card-value {
+    font-size: 1.45rem;
+    font-weight: 800;
+}
+
+.card-value-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.val-big {
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.val-unit {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    opacity: 0.9;
+}
+
+/* SECTION 2: AVANCE DE ENTREGAS */
+.section-avance {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.avance-header-banner {
+    background-color: #4a1521;
+    color: #ffffff;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 800;
+    padding: 7px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+    width: 100%;
+}
+
+.avance-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr 1fr 0.9fr;
+    gap: 14px;
+    width: 100%;
+}
+
+.avance-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 14px;
+    border: 2px solid #ded5c5;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.avance-card-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #5c4e3c;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.donut-chart-box {
+    position: relative;
+    width: 125px;
+    height: 125px;
+    margin: 2px auto;
+    padding: 2px;
+}
+
+.donut-chart-box.small-box {
+    width: 105px;
+    height: 105px;
+    margin: 0 auto;
+    padding: 2px;
+}
+
+.avance-card-footer, .sub-footer {
+    font-size: 0.7rem;
+    color: #333333;
+    text-align: center;
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+.card-double-donut .double-donut-flex {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    gap: 6px;
+}
+
+.single-donut-sub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 48%;
+}
+
+.card-fecha-atencion {
+    background: #e6dfd1;
+    border-color: #c9bea9;
+    justify-content: center;
+}
+
+.date-atencion-num {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #4a1521;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.date-title {
+    font-size: 0.7rem;
+    color: #0d3629;
+    margin-bottom: 8px;
+}
+
+.date-people-icon {
+    font-size: 2rem;
+}
+
+/* SECTION 3: TRI-COLUMN BREAKDOWN */
+.section-tri {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 1.2fr;
+    gap: 14px;
+    margin-bottom: 20px;
+    align-items: start;
+    width: 100%;
+}
+
+.tri-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 14px;
+    border: 2px solid #ded5c5;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.tri-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #4a1521;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.tri-title.title-table {
+    background: #0d3629;
+    color: #ffffff;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+}
+
+.pie-chart-container {
+    height: 150px;
+    position: relative;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.genero-legend {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 6px;
+    width: 100%;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.icon-man, .icon-woman {
+    font-size: 1.6rem;
+}
+
+.legend-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.lbl-gender {
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: #666666;
+}
+
+.num-gender {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+/* Cultivos Table Container */
+.table-container {
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid #e0d8c8;
+    box-sizing: border-box;
+}
+
+.table-container.pdf-mode {
+    max-height: none !important;
+    overflow: visible !important;
+    border: none !important;
+}
+
+.cultivos-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.65rem;
+    text-align: center;
+}
+
+.cultivos-table th {
+    background-color: #bfa874;
+    color: #ffffff;
+    padding: 6px 3px;
+    font-weight: 800;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+.table-container.pdf-mode .cultivos-table th {
+    position: static !important;
+}
+
+.cultivos-table td {
+    padding: 4px 2px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+    white-space: nowrap;
+}
+
+.cultivos-table tr:nth-child(even) {
+    background-color: #f9f7f2;
+}
+
+.total-row {
+    font-weight: 800;
+    background-color: #e2dac9 !important;
+}
+
+/* Edades Line Chart Container */
+.line-chart-container {
+    height: 220px;
+    position: relative;
+    padding-top: 5px;
+    width: 100%;
+}
+
+/* SECTION 4: ENTREGAS */
+.section-entregas {
+    width: 100%;
+}
+
+.entregas-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px;
+    border: 2px solid #ded5c5;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.entregas-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #0d3629;
+    text-align: center;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.entregas-chart-container {
+    height: 220px;
+    position: relative;
+    padding-top: 5px;
+    width: 100%;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (Tablets & Mobile Cellphones)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    .report-wrapper {
+        padding: 0 10px;
+    }
+    
+    .avance-cards-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .section-tri {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .card-cultivos {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .control-bar {
+        padding: 10px 14px;
+    }
+
+    .control-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .control-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .select-input, .date-input, .btn-pdf {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .report-wrapper {
+        padding: 0 4px;
+    }
+
+    .report-paper {
+        padding: 12px 8px;
+        border-radius: 4px;
+    }
+
+    .official-header {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+
+    .program-title {
+        text-align: center;
+    }
+
+    .meta-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .avance-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .section-tri {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .tri-card {
+        width: 100%;
+        margin: 0;
+        padding: 10px 8px;
+    }
+
+    .card-cultivos {
+        grid-column: span 1;
+    }
+    
+    .cultivos-table {
+        font-size: 0.58rem;
+    }
+
+    .cultivos-table th, .cultivos-table td {
+        padding: 3px 2px;
+    }
+
+    .double-donut-flex {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .meta-card {
+        padding: 8px 10px;
+        min-height: 80px;
+    }
+
+    .card-value {
+        font-size: 1.2rem;
+    }
+
+    .val-big {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .meta-cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .seal-text-top {
+        font-size: 1.1rem;
+    }
+
+    .fert-title {
+        font-size: 1.2rem;
+    }
+
+    .main-banner h1 {
+        font-size: 0.95rem;
+    }
+    
+    .cultivos-table {
+        font-size: 0.54rem;
+    }
+
+    .cultivos-table th, .cultivos-table td {
+        padding: 2px 1px;
+    }
+}
+
+/* Print and PDF Export Styles */
+@media print {
+    .control-bar {
+        display: none !important;
+    }
+    body {
+        background: #ffffff !important;
+        padding: 0 !important;
+    }
+    .report-wrapper {
+        margin: 0 !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+    .report-paper {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 10px !important;
+    }
+    .table-container {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
