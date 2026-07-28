@@ -1,5 +1,16 @@
 // Fertilizantes para el Bienestar 2026 - Dashboard App Logic
 
+// ==========================================================================
+// CONFIGURACIÓN DE ACTUALIZACIÓN EN LA NUBE (GITHUB ACTIONS)
+// Pega tu Token Personal de GitHub (PAT) en 'token' si deseas que sea 100% FIJO
+// ==========================================================================
+const GITHUB_CONFIG = {
+    owner: 'FranciscoGarciaG',
+    repo: 'Buscaminas',
+    workflow: 'update_suri.yml',
+    token: '' // <-- PEGA AQUÍ TU TOKEN PERMANENTE 'ghp_xxxxxxxxxxxxxxxxxxxx'
+};
+
 let globalData = {};
 let currentState = 'NACIONAL'; // Default to NACIONAL
 let selectedDate = '2026-07-27';
@@ -822,7 +833,12 @@ let isUpdating = false;
 
 async function triggerGitHubCloudUpdate() {
     const patInput = document.getElementById('github-pat-input');
-    const pat = patInput ? patInput.value.trim() : '';
+    const inputToken = patInput ? patInput.value.trim() : '';
+    const pat = GITHUB_CONFIG.token || inputToken || (tryLocalStorageGet('github_pat')) || '';
+
+    if (inputToken) {
+        try { localStorage.setItem('github_pat', inputToken); } catch (e) { }
+    }
 
     document.getElementById('update-login-section').style.display = 'none';
     document.getElementById('update-progress-section').style.display = 'block';
@@ -833,9 +849,9 @@ async function triggerGitHubCloudUpdate() {
     updateProgressBar(25, 'Enviando orden a la nube...');
     addLogEntry('☁️ Solicitando actualización remota a los servidores de GitHub Actions...', 'info');
 
-    const repoOwner = 'FranciscoGarciaG';
-    const repoName = 'Buscaminas';
-    const workflowId = 'update_suri.yml';
+    const repoOwner = GITHUB_CONFIG.owner || 'FranciscoGarciaG';
+    const repoName = GITHUB_CONFIG.repo || 'Buscaminas';
+    const workflowId = GITHUB_CONFIG.workflow || 'update_suri.yml';
 
     const usrCloud = document.getElementById('suri-usuario-cloud')?.value.trim() || '';
     const pwdCloud = document.getElementById('suri-password-cloud')?.value.trim() || '';
@@ -861,7 +877,7 @@ async function triggerGitHubCloudUpdate() {
             updateProgressBar(100, 'Servidor Nube Iniciado');
             addLogEntry('🚀 ¡Servidor de GitHub Actions iniciado exitosamente!', 'success');
             addLogEntry('⏳ Los servidores de GitHub están descargando los reportes SURI y procesando los datos.', 'info');
-            addLogEntry('🎉 El Dashboard y Posit Cloud se actualizarán automáticamente en ~2 minutos.', 'success');
+            addLogEntry('🎉 El Dashboard y Cloudflare Pages se actualizarán automáticamente en ~2 minutos.', 'success');
         } else {
             updateProgressBar(75, 'Orden enviada');
             addLogEntry('☁️ Solicitud enviada a la Nube.', 'info');
@@ -873,14 +889,24 @@ async function triggerGitHubCloudUpdate() {
     }
 }
 
+function tryLocalStorageGet(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+}
+
 function openUpdateModal() {
     const modal = document.getElementById('update-modal');
     if (modal) {
         modal.style.display = 'flex';
-        // Reset to login view
         document.getElementById('update-login-section').style.display = 'block';
         document.getElementById('update-progress-section').style.display = 'none';
-        // Check if there's an active session
+
+        // Load saved permanent PAT token
+        const savedPat = GITHUB_CONFIG.token || tryLocalStorageGet('github_pat') || '';
+        if (savedPat) {
+            const patInput = document.getElementById('github-pat-input');
+            if (patInput) patInput.value = savedPat;
+        }
+
         checkSURISession();
     }
 }
