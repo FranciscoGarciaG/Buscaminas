@@ -229,26 +229,33 @@ class SURIDownloader:
                 raise Exception("No se encontró el campo de usuario en la página de login.")
 
             if user_input:
-                await user_input.focus()
-                await user_input.fill("")
-                await user_input.type(username, delay=30)
+                await user_input.fill(username)
                 self.emit(f"Usuario '{username}' ingresado.", "info", 11, "login")
 
             pass_input = await self.page.query_selector(
                 "#ln_password, input[name='ln_password'], input[name='password'], input[type='password']"
             )
             if pass_input:
-                await pass_input.focus()
-                await pass_input.fill("")
-                await pass_input.type(password, delay=30)
+                await pass_input.fill(password)
                 self.emit("Contraseña ingresada.", "info", 12, "login")
 
             self.emit("Enviando formulario de login...", "info", 13, "login")
-            
-            # Submit via Enter key on password input first
-            if pass_input:
-                await pass_input.press("Enter")
-                await asyncio.sleep(2)
+
+            # Click the explicit submit button
+            submit_btn = await self.page.query_selector(
+                "form#formLogin input[type='submit'], #formLogin input.btn-success, "
+                "input[type='submit'], button[type='submit'], #btn_login"
+            )
+            if submit_btn and await submit_btn.is_visible():
+                try:
+                    await submit_btn.click()
+                except Exception:
+                    await pass_input.press("Enter")
+            else:
+                if pass_input:
+                    await pass_input.press("Enter")
+
+            await asyncio.sleep(3)
 
             # Check if SURI popped up #modalErrors (e.g. invalid credentials or session alert)
             modal_err = await self.page.query_selector("#modalErrors, .modal-danger, .modal.in")
