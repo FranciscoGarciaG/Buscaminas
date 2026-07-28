@@ -1,7 +1,16 @@
 name: Actualización Automática SURI (100% Nube)
 
 on:
-  workflow_dispatch: # Permite ejecutar manualmente con 1 clic desde GitHub Web o desde tu Celular
+  workflow_dispatch:
+    inputs:
+      usuario:
+        description: 'Usuario SURI'
+        required: false
+        default: ''
+      password:
+        description: 'Contraseña SURI'
+        required: false
+        default: ''
   schedule:
     - cron: '0 14 * * *' # Ejecución automática diaria programada (8:00 AM hora México)
 
@@ -30,8 +39,8 @@ jobs:
 
       - name: 5. Descargar SURI y Procesar Datos en la Nube
         env:
-          SURI_USUARIO: ${{ secrets.SURI_USUARIO }}
-          SURI_PASSWORD: ${{ secrets.SURI_PASSWORD }}
+          SURI_USUARIO: ${{ github.event.inputs.usuario != '' && github.event.inputs.usuario || secrets.SURI_USUARIO }}
+          SURI_PASSWORD: ${{ github.event.inputs.password != '' && github.event.inputs.password || secrets.SURI_PASSWORD }}
         run: |
           python run_cloud_update.py
 

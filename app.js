@@ -837,6 +837,14 @@ async function triggerGitHubCloudUpdate() {
     const repoName = 'Buscaminas';
     const workflowId = 'update_suri.yml';
 
+    const usrCloud = document.getElementById('suri-usuario-cloud')?.value.trim() || '';
+    const pwdCloud = document.getElementById('suri-password-cloud')?.value.trim() || '';
+
+    const bodyObj = { ref: 'main' };
+    if (usrCloud || pwdCloud) {
+        bodyObj.inputs = { usuario: usrCloud, password: pwdCloud };
+    }
+
     try {
         const headers = { 'Accept': 'application/vnd.github.v3+json' };
         if (pat) {
@@ -846,7 +854,7 @@ async function triggerGitHubCloudUpdate() {
         const resp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/${workflowId}/dispatches`, {
             method: 'POST',
             headers: headers,
-            body: JSON.stringify({ ref: 'main' })
+            body: JSON.stringify(bodyObj)
         });
 
         if (resp.ok || resp.status === 204) {
