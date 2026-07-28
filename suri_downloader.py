@@ -250,17 +250,36 @@ class SURIDownloader:
                 await pass_input.press("Enter")
                 await asyncio.sleep(2)
 
-            # Fallback submit button click if still on login
+            # Check if SURI popped up #modalErrors (e.g. invalid credentials or session alert)
+            modal_err = await self.page.query_selector("#modalErrors, .modal-danger, .modal.in")
+            if modal_err:
+                try:
+                    modal_text = await modal_err.inner_text()
+                    clean_text = " ".join(modal_text.split())
+                    self.emit(f"⚠️ Alerta SURI (#modalErrors): '{clean_text}'", "warning", 0, "login")
+                    
+                    # Dismiss modal so it doesn't block the screen
+                    ok_btn = await modal_err.query_selector("button, input[type='button'], a.btn")
+                    if ok_btn:
+                        await ok_btn.click(force=True)
+                        await asyncio.sleep(2)
+                except Exception as me:
+                    logger.warning(f"Error handling modalErrors: {me}")
+
+            # Fallback submit button click if still on login page and modal is gone
             if "login" in self.page.url:
                 submit_btn = await self.page.query_selector(
                     "form#formLogin input[type='submit'], #formLogin input.btn-success, "
-                    "input[type='submit'], button[type='submit'], #btn_login, button:has-text('Iniciar'), input[value*='Iniciar']"
+                    "input[type='submit'], button[type='submit'], #btn_login"
                 )
-                if submit_btn:
-                    await submit_btn.click()
+                if submit_btn and await submit_btn.is_visible():
+                    try:
+                        await submit_btn.click(timeout=5000)
+                    except Exception:
+                        pass
 
             try:
-                await self.page.wait_for_url(lambda u: "login" not in u or "home" in u or "sigap" in u or "reportes" in u, timeout=15000)
+                await self.page.wait_for_url(lambda u: "login" not in u or "home" in u or "sigap" in u or "reportes" in u, timeout=12000)
             except Exception:
                 pass
 
@@ -274,14 +293,15 @@ class SURIDownloader:
                 # Capture page error message for precise diagnosis
                 error_msg = ""
                 try:
-                    err_elem = await self.page.query_selector(".alert, .alert-danger, .error, .help-block, .invalid-feedback, #msg_error")
+                    err_elem = await self.page.query_selector("#modalErrors, .alert, .alert-danger, .error, .help-block, #msg_error")
                     if err_elem:
                         error_msg = await err_elem.inner_text()
                 except Exception:
                     pass
 
                 if error_msg:
-                    self.emit(f"⚠️ Mensaje de SURI: '{error_msg.strip()}'", "warning", 0, "login")
+                    clean_err = " ".join(error_msg.split())
+                    self.emit(f"⚠️ Mensaje devuelto por SURI: '{clean_err}'", "warning", 0, "login")
                 else:
                     self.emit(f"⚠️ No se pudo verificar el login (URL actual: {url_after}). Revise credenciales SURI_PASSWORD en GitHub Secrets.", "warning", 0, "login")
                 return False
