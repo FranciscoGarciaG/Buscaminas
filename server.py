@@ -126,13 +126,17 @@ if __name__ == "__main__":
     import uvicorn
     import socket
 
-    def is_port_in_use(p):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            return s.connect_ex(('127.0.0.1', p)) == 0
+    port_env = os.environ.get("PORT")
+    if port_env:
+        port = int(port_env)
+    else:
+        def is_port_in_use(p):
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                return s.connect_ex(('127.0.0.1', p)) == 0
 
-    port = 8080
-    if is_port_in_use(port):
-        port = 8085
+        port = 8080
+        if is_port_in_use(port):
+            port = 8085
 
     print("=" * 60)
     print("  Dashboard Fertilizantes - Servidor de Carga Manual CSV")
