@@ -886,7 +886,7 @@ function handleCSVFileSelection(event) {
 }
 
 function processFilesArray(files) {
-    const csvFiles = files.filter(f => f.name.toLowerCase().endswith('.csv') || f.name.toLowerCase().includes('.csv'));
+    const csvFiles = files.filter(f => f.name.toLowerCase().endsWith('.csv') || f.name.toLowerCase().includes('.csv'));
 
     if (csvFiles.length === 0) {
         alert('Por favor seleccione únicamente archivos con formato .csv');
