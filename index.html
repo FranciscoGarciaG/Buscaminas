@@ -46,47 +46,38 @@
         </div>
     </header>
 
-    <!-- SURI Update Modal Overlay -->
+    <!-- CSV Upload Modal Overlay -->
     <div id="update-modal" class="update-modal-overlay" style="display:none;">
         <div class="update-modal">
             <div class="update-modal-header">
-                <h3>🔄 Actualización 100% Nube (GitHub Actions)</h3>
+                <h3>📁 Actualizar Datos (Cargar Reportes CSV)</h3>
                 <button class="update-modal-close" onclick="closeUpdateModal()">✕</button>
             </div>
             <div class="update-modal-body">
-                <!-- Cloud Actions Form -->
+                <!-- CSV Upload Form -->
                 <div id="update-login-section">
-                    <p class="update-modal-desc">Inicie la descarga de los reportes SURI en la nube de GitHub sin necesidad de mantener encendida su computadora.</p>
+                    <p class="update-modal-desc">Seleccione o arrastre los archivos CSV descargados (Cortes Nacionales y Sinaloa):</p>
                     
-                    <div id="update-session-status" class="update-session-pill" style="display:block; background: rgba(21, 78, 56, 0.12); border: 1px solid #154e38; color: #154e38;">
-                        ☁️ <strong>Modo Nube Autónomo Activo</strong><br>
-                        Al presionar el botón, GitHub Actions iniciará la descarga y actualización automática en Cloudflare Pages.
+                    <div class="csv-dropzone" id="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
+                        <div class="dropzone-icon">📥</div>
+                        <div class="dropzone-text"><strong>Haga clic aquí</strong> o arrastre sus archivos CSV</div>
+                        <div class="dropzone-sub">Formato aceptado: .csv (puede seleccionar varios a la vez)</div>
+                        <input type="file" id="csv-file-input" multiple accept=".csv" style="display:none;" onchange="handleCSVFileSelection(event)">
                     </div>
 
-                    <div class="update-form-group" style="margin-top: 15px;">
-                        <label for="suri-usuario-cloud">Usuario SURI (Opcional si usas GitHub Secrets):</label>
-                        <input type="text" id="suri-usuario-cloud" class="update-input" placeholder="Ej: MARIANO.SANTOS">
-                    </div>
-                    <div class="update-form-group">
-                        <label for="suri-password-cloud">Contraseña SURI (Opcional si usas GitHub Secrets):</label>
-                        <input type="password" id="suri-password-cloud" class="update-input" placeholder="••••••••">
-                    </div>
-                    <div class="update-form-group">
-                        <label for="github-pat-input">Token Personal de GitHub (PAT) (Opcional):</label>
-                        <input type="password" id="github-pat-input" class="update-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx (Opcional)">
-                    </div>
+                    <div id="csv-file-list" class="csv-file-list" style="display:none; margin-top: 10px;"></div>
 
-                    <div class="update-actions">
-                        <button id="btn-start-cloud-update" class="btn-start-update" onclick="triggerGitHubCloudUpdate()">☁️ 🚀 Iniciar Actualización Nube</button>
-                        <button class="btn-cancel-update" onclick="closeUpdateModal()">Cerrar</button>
+                    <div class="update-actions" style="margin-top: 15px;">
+                        <button id="btn-upload-csvs" class="btn-start-update" onclick="uploadCSVFiles()" disabled>⚡ Procesar y Actualizar Dashboard</button>
+                        <button class="btn-cancel-update" onclick="closeUpdateModal()">Cancelar</button>
                     </div>
                 </div>
-                <!-- Progress Section (shown during update) -->
+                <!-- Progress Section (shown during upload/process) -->
                 <div id="update-progress-section" style="display:none;">
                     <div class="progress-bar-container">
                         <div id="update-progress-bar" class="progress-bar-fill" style="width:0%;">0%</div>
                     </div>
-                    <div id="update-step-label" class="update-step-label">Preparando...</div>
+                    <div id="update-step-label" class="update-step-label">Procesando...</div>
                     <div id="update-log" class="update-log"></div>
                     <div class="update-actions">
                         <button id="btn-stop-update" class="btn-stop-update" onclick="closeUpdateModal()">✕ Cerrar</button>

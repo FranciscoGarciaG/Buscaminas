@@ -1208,3 +1208,73 @@ body.force-desktop-pdf .tri-card.card-edades {
         display: none !important;
     }
 }
+
+/* Drag and Drop Zone for Manual CSV Upload */
+.csv-dropzone {
+    border: 2px dashed #154e38;
+    background: rgba(21, 78, 56, 0.05);
+    border-radius: 12px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-top: 10px;
+}
+
+.csv-dropzone:hover, .csv-dropzone.dragover {
+    background: rgba(21, 78, 56, 0.15);
+    border-color: #0f2b23;
+    transform: translateY(-2px);
+}
+
+.dropzone-icon {
+    font-size: 2.2rem;
+    margin-bottom: 6px;
+}
+
+.dropzone-text {
+    font-size: 0.95rem;
+    color: #154e38;
+    margin-bottom: 4px;
+}
+
+.dropzone-sub {
+    font-size: 0.8rem;
+    color: #666666;
+}
+
+.csv-file-list {
+    max-height: 140px;
+    overflow-y: auto;
+    border: 1px solid #e2dac9;
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 6px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-bottom: 1px solid #f0eade;
+    font-size: 0.82rem;
+    color: #333333;
+}
+
+.file-item:last-child {
+    border-bottom: none;
+}
+
+.file-item-name {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-item-size {
+    color: #888888;
+    font-size: 0.75rem;
+    margin-left: 10px;
+}

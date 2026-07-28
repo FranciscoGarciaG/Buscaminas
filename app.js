@@ -1,16 +1,5 @@
 // Fertilizantes para el Bienestar 2026 - Dashboard App Logic
 
-// ==========================================================================
-// CONFIGURACIÓN DE ACTUALIZACIÓN EN LA NUBE (GITHUB ACTIONS)
-// Pega tu Token Personal de GitHub (PAT) en 'token' si deseas que sea 100% FIJO
-// ==========================================================================
-const GITHUB_CONFIG = {
-    owner: 'FranciscoGarciaG',
-    repo: 'Buscaminas',
-    workflow: 'update_suri.yml',
-    token: '' // <-- PEGA AQUÍ TU TOKEN PERMANENTE 'ghp_xxxxxxxxxxxxxxxxxxxx'
-};
-
 let globalData = {};
 let currentState = 'NACIONAL'; // Default to NACIONAL
 let selectedDate = '2026-07-27';
@@ -825,73 +814,11 @@ function formatFechaMexican(dateStr) {
 }
 
 // ==========================================================================
-// SURI Update System (GitHub Actions Cloud + Local Fallback)
+// Manual CSV Upload System (Drag & Drop + Processing)
 // ==========================================================================
 
-let updateEventSource = null;
+let selectedCSVFiles = [];
 let isUpdating = false;
-
-async function triggerGitHubCloudUpdate() {
-    const patInput = document.getElementById('github-pat-input');
-    const inputToken = patInput ? patInput.value.trim() : '';
-    const pat = GITHUB_CONFIG.token || inputToken || (tryLocalStorageGet('github_pat')) || '';
-
-    if (inputToken) {
-        try { localStorage.setItem('github_pat', inputToken); } catch (e) { }
-    }
-
-    document.getElementById('update-login-section').style.display = 'none';
-    document.getElementById('update-progress-section').style.display = 'block';
-
-    const logEl = document.getElementById('update-log');
-    if (logEl) logEl.innerHTML = '';
-
-    updateProgressBar(25, 'Enviando orden a la nube...');
-    addLogEntry('☁️ Solicitando actualización remota a los servidores de GitHub Actions...', 'info');
-
-    const repoOwner = GITHUB_CONFIG.owner || 'FranciscoGarciaG';
-    const repoName = GITHUB_CONFIG.repo || 'Buscaminas';
-    const workflowId = GITHUB_CONFIG.workflow || 'update_suri.yml';
-
-    const usrCloud = document.getElementById('suri-usuario-cloud')?.value.trim() || '';
-    const pwdCloud = document.getElementById('suri-password-cloud')?.value.trim() || '';
-
-    const bodyObj = { ref: 'main' };
-    if (usrCloud || pwdCloud) {
-        bodyObj.inputs = { usuario: usrCloud, password: pwdCloud };
-    }
-
-    try {
-        const headers = { 'Accept': 'application/vnd.github.v3+json' };
-        if (pat) {
-            headers['Authorization'] = `token ${pat}`;
-        }
-
-        const resp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/${workflowId}/dispatches`, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(bodyObj)
-        });
-
-        if (resp.ok || resp.status === 204) {
-            updateProgressBar(100, 'Servidor Nube Iniciado');
-            addLogEntry('🚀 ¡Servidor de GitHub Actions iniciado exitosamente!', 'success');
-            addLogEntry('⏳ Los servidores de GitHub están descargando los reportes SURI y procesando los datos.', 'info');
-            addLogEntry('🎉 El Dashboard y Cloudflare Pages se actualizarán automáticamente en ~2 minutos.', 'success');
-        } else {
-            updateProgressBar(75, 'Orden enviada');
-            addLogEntry('☁️ Solicitud enviada a la Nube.', 'info');
-            addLogEntry('💡 Para lanzar el workflow sin token, entra a la pestaña Actions en tu repositorio y presiona "Run workflow".', 'warning');
-        }
-    } catch (e) {
-        addLogEntry(`⚠️ Solicitud procesada: ${e.message}`, 'warning');
-        addLogEntry('💡 Recuerda que también puedes ejecutar el flujo con 1 clic desde la extensión GitHub Actions en tu IDE o la web de GitHub.', 'info');
-    }
-}
-
-function tryLocalStorageGet(key) {
-    try { return localStorage.getItem(key); } catch (e) { return null; }
-}
 
 function openUpdateModal() {
     const modal = document.getElementById('update-modal');
@@ -900,65 +827,105 @@ function openUpdateModal() {
         document.getElementById('update-login-section').style.display = 'block';
         document.getElementById('update-progress-section').style.display = 'none';
 
-        // Load saved permanent PAT token
-        const savedPat = GITHUB_CONFIG.token || tryLocalStorageGet('github_pat') || '';
-        if (savedPat) {
-            const patInput = document.getElementById('github-pat-input');
-            if (patInput) patInput.value = savedPat;
+        // Reset file selection
+        selectedCSVFiles = [];
+        const fileListEl = document.getElementById('csv-file-list');
+        if (fileListEl) {
+            fileListEl.innerHTML = '';
+            fileListEl.style.display = 'none';
         }
+        const uploadBtn = document.getElementById('btn-upload-csvs');
+        if (uploadBtn) uploadBtn.disabled = true;
 
-        checkSURISession();
+        setupDragAndDrop();
     }
 }
 
 function closeUpdateModal() {
-    if (isUpdating) {
-        if (!confirm('¿Desea cerrar? La actualización continuará en segundo plano.')) return;
-    }
     const modal = document.getElementById('update-modal');
     if (modal) modal.style.display = 'none';
-    // Disconnect SSE if connected
-    if (updateEventSource) {
-        updateEventSource.close();
-        updateEventSource = null;
+}
+
+function setupDragAndDrop() {
+    const dropzone = document.getElementById('csv-dropzone');
+    if (!dropzone || dropzone.dataset.initialized) return;
+
+    dropzone.dataset.initialized = 'true';
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+            processFilesArray(Array.from(files));
+        }
+    }, false);
+}
+
+function handleCSVFileSelection(event) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+        processFilesArray(Array.from(files));
     }
 }
 
-async function checkSURISession() {
-    const isCloud = window.location.hostname.includes('pages.dev') || window.location.hostname.includes('cloudflare') || window.location.hostname.includes('posit.cloud');
-    const pill = document.getElementById('update-session-status');
+function processFilesArray(files) {
+    const csvFiles = files.filter(f => f.name.toLowerCase().endswith('.csv') || f.name.toLowerCase().includes('.csv'));
 
-    if (isCloud) {
-        if (pill) {
-            pill.style.display = 'block';
-            pill.style.background = 'rgba(21, 78, 56, 0.12)';
-            pill.style.border = '1px solid #154e38';
-            pill.style.color = '#154e38';
-            pill.innerHTML = '☁️ <strong>Publicado en la Nube (Cloudflare Pages)</strong><br>Al presionar el botón de actualización, los servidores de GitHub Actions descargarán los reportes de SURI y actualizarán el dashboard en vivo.';
-        }
+    if (csvFiles.length === 0) {
+        alert('Por favor seleccione únicamente archivos con formato .csv');
         return;
     }
 
-    try {
-        const resp = await fetch('/api/check-session');
-        if (resp.ok) {
-            const data = await resp.json();
-            if (data.active && pill) {
-                pill.style.display = 'block';
-                pill.innerHTML = '<span>✅ Sesión activa detectada — No requiere credenciales</span>';
-            }
-        }
-    } catch (e) {
-        // Local server not running
+    selectedCSVFiles = csvFiles;
+    renderSelectedFilesList();
+}
+
+function renderSelectedFilesList() {
+    const listEl = document.getElementById('csv-file-list');
+    const uploadBtn = document.getElementById('btn-upload-csvs');
+
+    if (!listEl) return;
+
+    listEl.innerHTML = '';
+    listEl.style.display = 'block';
+
+    selectedCSVFiles.forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'file-item';
+        const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+        item.innerHTML = `
+            <span class="file-item-name">📄 ${file.name}</span>
+            <span class="file-item-size">${sizeMb} MB</span>
+        `;
+        listEl.appendChild(item);
+    });
+
+    if (uploadBtn) {
+        uploadBtn.disabled = selectedCSVFiles.length === 0;
+        uploadBtn.textContent = `⚡ Procesar ${selectedCSVFiles.length} Reporte(s) CSV`;
     }
 }
 
-async function startUpdate() {
-    const usuario = document.getElementById('suri-usuario').value.trim();
-    const password = document.getElementById('suri-password').value.trim();
-
-    if (!usuario || !password) {
-        alert('Por favor ingrese usuario y contraseña del SURI.');
+async function uploadCSVFiles() {
+    if (selectedCSVFiles.length === 0) {
+        alert('Seleccione al menos un archivo CSV.');
         return;
     }
 
@@ -968,42 +935,46 @@ async function startUpdate() {
     document.getElementById('update-login-section').style.display = 'none';
     document.getElementById('update-progress-section').style.display = 'block';
 
-    // Clear previous log
     const logEl = document.getElementById('update-log');
     if (logEl) logEl.innerHTML = '';
 
-    // Update progress bar to 0
-    updateProgressBar(0, 'Conectando...');
+    updateProgressBar(10, 'Subiendo archivos...');
+    addLogEntry(`📤 Subiendo ${selectedCSVFiles.length} archivos CSV al servidor...`, 'info');
 
-    // Connect SSE for real-time progress
-    connectUpdateSSE();
+    const formData = new FormData();
+    selectedCSVFiles.forEach(file => {
+        formData.append('files', file);
+    });
 
-    // Trigger the update pipeline
     try {
-        const resp = await fetch('/api/update-data', {
+        updateProgressBar(40, 'Procesando datos...');
+        addLogEntry('⚙️ Ejecutando consolidación y cálculo de datos con process_data.py...', 'info');
+
+        const resp = await fetch('/api/upload-csvs', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ usuario, password })
+            body: formData
         });
 
-        if (!resp.ok) {
-            const errData = await resp.json().catch(() => ({}));
-            addLogEntry(`❌ Error: ${errData.detail || 'No se pudo iniciar la actualización'}`, 'error');
+        if (resp.ok) {
+            const data = await resp.json();
+            updateProgressBar(90, 'Completado');
+            addLogEntry(`✅ ${data.message}`, 'success');
+
+            addLogEntry('🔄 Actualizando vista del dashboard...', 'info');
+            setTimeout(() => {
+                reloadDashboardData();
+            }, 1000);
+        } else {
+            const err = await resp.json().catch(() => ({}));
+            updateProgressBar(0, 'Error');
+            addLogEntry(`❌ Error en servidor: ${err.detail || 'Fallo al procesar los archivos.'}`, 'error');
             isUpdating = false;
         }
     } catch (e) {
-        addLogEntry(`❌ Error de conexión al servidor: ${e.message}`, 'error');
-        addLogEntry('💡 Asegúrese de iniciar el servidor con start_server.bat', 'warning');
+        updateProgressBar(0, 'Error');
+        addLogEntry(`❌ Error de conexión al servidor local: ${e.message}`, 'error');
+        addLogEntry('💡 Asegúrese de ejecutar el servidor con start_server.bat', 'warning');
         isUpdating = false;
-    }
-}
-
-async function stopUpdate() {
-    try {
-        await fetch('/api/stop-update', { method: 'POST' });
-        addLogEntry('⛔ Solicitud de detención enviada...', 'warning');
-    } catch (e) {
-        addLogEntry(`Error al detener: ${e.message}`, 'error');
     }
 }
 
