@@ -114,10 +114,14 @@ body {
 
 .report-paper {
     position: relative;
-    background-color: #dcd4c3;
-    border-radius: 8px;
+    background-color: #f7f4ee;
+    background-image: url('BACK SIN.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    padding: 20px 24px;
+    padding: 24px 28px;
     border: 1px solid #b8ac97;
     width: 100%;
     box-sizing: border-box;
@@ -129,95 +133,72 @@ body {
     z-index: 2;
 }
 
-/* Header Official Branding */
-.official-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-    padding: 0 4px;
+/* Header Official Branding Image ICONOS-07.png */
+.official-header-img-container {
     width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-.seal-logo {
-    display: flex;
-    flex-direction: column;
+.official-header-img {
+    width: 100%;
+    max-width: 960px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
 }
 
-.seal-text-top {
-    font-size: 1.35rem;
-    font-weight: 800;
-    color: #691c32; /* Official Gob Red */
-    letter-spacing: -0.5px;
-}
-
-.seal-text-sub {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #13382c;
-}
-
-.program-title {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
-}
-
-.fert-title {
-    font-size: 1.45rem;
-    font-weight: 800;
-    color: #13382c;
-    line-height: 1;
-}
-
-.fert-sub {
-    font-size: 1.05rem;
-    font-style: italic;
-    color: #b59a57;
-    font-weight: 600;
-}
-
-/* Banner Title */
+/* Banner Title Maroon Clean Solid */
 .main-banner {
-    background-color: #0d3629;
+    background-color: #691c32;
     color: #ffffff;
     text-align: center;
-    padding: 12px 18px;
-    border-radius: 10px;
-    margin-bottom: 18px;
+    padding: 10px 18px;
+    border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     width: 100%;
 }
 
 .main-banner h1 {
-    font-size: 1.15rem;
+    font-size: 1.45rem;
     font-weight: 800;
     letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    color: #ffffff;
 }
 
-.main-banner h2 {
-    font-size: 0.95rem;
+.corte-date-bar {
+    text-align: right;
+    font-size: 0.75rem;
     font-weight: 700;
-    color: #e2c982;
+    color: #222222;
+    margin-top: 4px;
+    margin-bottom: 10px;
+}
+
+/* Gold Section Dividers with Drop Shadow */
+.divider-gold {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #b58c3a 15%, #c9aa63 50%, #b58c3a 85%, transparent);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+    margin: 16px 0;
+    border-radius: 2px;
+}
+
+/* Section Title Center */
+.section-title-center {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #691c32;
+    text-align: center;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
 }
 
 /* SECTION 1: METAS */
 .section-meta {
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-.meta-header-banner {
-    background-color: #0d3629;
-    color: #ffffff;
-    text-align: center;
-    font-size: 0.95rem;
-    font-weight: 800;
-    padding: 7px;
-    border-radius: 8px;
-    margin-bottom: 14px;
-    letter-spacing: 1px;
+    margin-bottom: 18px;
     width: 100%;
 }
 
@@ -232,139 +213,168 @@ body {
     border-radius: 12px;
     padding: 12px 14px;
     color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: space-between;
-    min-height: 90px;
+    min-height: 95px;
     width: 100%;
     box-sizing: border-box;
 }
 
-.card-gold { background: linear-gradient(135deg, #a38148, #bd9a5a); }
-.card-darkgreen { background: linear-gradient(135deg, #2b453a, #1a332a); }
-.card-maroon { background: linear-gradient(135deg, #591d28, #3d121a); }
-.card-deepgreen { background: linear-gradient(135deg, #0d3629, #08241b); }
+.card-gold { background: #b58c3a; }
+.card-maroon { background: #8c1d35; }
+.card-darkgreen { background: #154e38; }
+.card-slate { background: #5e6d62; }
 
-.meta-card .card-title {
-    font-size: 0.78rem;
-    font-weight: 800;
-    text-align: center;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-}
-
-.meta-card .card-body {
+.meta-card-left {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
+    margin-right: 8px;
 }
 
-.card-icon {
-    font-size: 1.8rem;
-    opacity: 0.9;
+.meta-icon-img {
+    height: 52px;
+    width: auto;
+    max-width: 60px;
+    object-fit: contain;
 }
 
-.card-value {
-    font-size: 1.45rem;
-    font-weight: 800;
+/* Derechohabientes icon 5% larger */
+.card-gold .meta-icon-img {
+    height: 58px;
+    max-width: 66px;
 }
 
-.card-value-stack {
+.meta-card-right {
     display: flex;
     flex-direction: column;
-    align-items: center;
-}
-
-.val-big {
-    font-size: 1.3rem;
-    font-weight: 800;
-}
-
-.val-unit {
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    opacity: 0.9;
-}
-
-/* SECTION 2: AVANCE DE ENTREGAS */
-.section-avance {
-    margin-bottom: 20px;
+    text-align: right;
+    justify-content: center;
     width: 100%;
 }
 
-.avance-header-banner {
-    background-color: #4a1521;
-    color: #ffffff;
-    text-align: center;
-    font-size: 0.95rem;
+.meta-card .card-title {
+    font-size: 0.82rem;
     font-weight: 800;
-    padding: 7px;
-    border-radius: 8px;
-    margin-bottom: 14px;
-    letter-spacing: 1px;
+    letter-spacing: 0.3px;
+}
+
+.meta-card .card-val-big {
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 2px 0;
+}
+
+.meta-card .card-val-sub {
+    font-size: 0.72rem;
+    font-weight: 600;
+    opacity: 0.95;
+}
+
+/* SECTION 2: AVANCES */
+.section-avance {
+    margin-bottom: 18px;
     width: 100%;
 }
 
 .avance-cards-grid {
     display: grid;
-    grid-template-columns: 1fr 1.6fr 1fr 0.9fr;
-    gap: 14px;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 12px;
+    align-items: stretch;
     width: 100%;
 }
 
 .avance-card {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.94);
     border-radius: 14px;
     padding: 14px;
-    border: 2px solid #ded5c5;
+    border: 1.5px solid #ded5c5;
     box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: space-between;
     width: 100%;
     box-sizing: border-box;
 }
 
-.avance-card-title {
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: #5c4e3c;
-    text-align: center;
-    margin-bottom: 8px;
+.avance-v-divider {
+    width: 1px;
+    background: linear-gradient(180deg, transparent, #c9bea9 20%, #b58c3a 50%, #c9bea9 80%, transparent);
+    box-shadow: 1px 0 3px rgba(0,0,0,0.1);
+    align-self: stretch;
 }
 
+.avance-card-header-title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #691c32;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.derechohabientes-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.derechohabientes-side-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.side-lbl-total {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.side-val-total {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+.side-lbl-atendidos {
+    font-size: 0.68rem;
+    color: #666666;
+    margin-top: 6px;
+}
+
+.side-val-atendidos-fecha {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #691c32;
+}
+
+/* Donut Chart Containers */
 .donut-chart-box {
     position: relative;
     width: 125px;
     height: 125px;
-    margin: 2px auto;
-    padding: 2px;
-}
-
-.donut-chart-box.small-box {
-    width: 105px;
-    height: 105px;
     margin: 0 auto;
     padding: 2px;
 }
 
-.avance-card-footer, .sub-footer {
-    font-size: 0.7rem;
-    color: #333333;
-    text-align: center;
-    margin-top: 6px;
-    font-weight: 500;
+.donut-chart-box.small-box {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    padding: 2px;
 }
 
-.card-double-donut .double-donut-flex {
+.card-producto-entregado .double-donut-flex {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-around;
     align-items: center;
     width: 100%;
-    gap: 6px;
 }
 
 .single-donut-sub {
@@ -374,127 +384,159 @@ body {
     width: 48%;
 }
 
-.card-fecha-atencion {
-    background: #e6dfd1;
-    border-color: #c9bea9;
-    justify-content: center;
+.sub-footer {
+    font-size: 0.72rem;
+    color: #222222;
+    text-align: center;
+    margin-top: 6px;
 }
 
-.date-atencion-num {
-    font-size: 2.6rem;
+.lbl-dap {
+    color: #8c1d35;
     font-weight: 800;
-    color: #4a1521;
-    line-height: 1;
-    margin-bottom: 4px;
 }
 
-.date-title {
-    font-size: 0.7rem;
-    color: #0d3629;
-    margin-bottom: 8px;
+.lbl-urea {
+    color: #154e38;
+    font-weight: 800;
 }
 
-.date-people-icon {
-    font-size: 2rem;
+.avance-bottom-total {
+    text-align: center;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #691c32;
+    margin-top: 10px;
 }
 
-/* SECTION 3: TRI-COLUMN BREAKDOWN */
+/* ==========================================================================
+   SECTION 3: TRI-COLUMN BREAKDOWN (PERFECT EQUAL STRETCHED CARDS FOR ALL 3)
+   ========================================================================== */
 .section-tri {
     display: grid;
-    grid-template-columns: 1fr 1.3fr 1.2fr;
+    grid-template-columns: 1fr 1.55fr 1.05fr;
     gap: 14px;
-    margin-bottom: 20px;
-    align-items: start;
+    margin-bottom: 18px;
+    align-items: stretch;
+    height: 440px;
     width: 100%;
 }
 
 .tri-card {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.94);
     border-radius: 14px;
-    padding: 14px;
-    border: 2px solid #ded5c5;
+    padding: 12px 14px;
+    border: 1.5px solid #ded5c5;
     box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
-    height: fit-content;
+    justify-content: space-between;
+    height: 440px;
+    min-height: 440px;
+    max-height: 440px;
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
 }
 
+.card-cultivos {
+    justify-content: flex-start;
+    gap: 2px;
+}
+
 .tri-title {
-    font-size: 0.75rem;
+    font-size: 0.88rem;
     font-weight: 800;
-    color: #4a1521;
+    color: #691c32;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
 .tri-title.title-table {
     background: #0d3629;
     color: #ffffff;
-    padding: 6px 8px;
+    padding: 5px 8px;
     border-radius: 4px;
     font-size: 0.68rem;
 }
 
-.pie-chart-container {
-    height: 150px;
-    position: relative;
-    margin-bottom: 10px;
+.pie-chart-container,
+.line-chart-container {
+    height: 100%;
     width: 100%;
+    position: relative;
+    margin: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pie-chart-container canvas,
+.line-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
 }
 
 .genero-legend {
     display: flex;
     justify-content: space-around;
-    padding-top: 6px;
+    padding-top: 4px;
     width: 100%;
+    margin-top: auto;
 }
 
 .legend-item {
     display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.icon-man, .icon-woman {
-    font-size: 1.6rem;
-}
-
-.legend-text {
-    display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .lbl-gender {
-    font-size: 0.6rem;
+    font-size: 0.8rem;
     font-weight: 800;
-    color: #666666;
 }
 
+.legend-hombres .lbl-gender { color: #154e38; }
+.legend-mujeres .lbl-gender { color: #691c32; }
+
 .num-gender {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     font-weight: 800;
     color: #1a1a1a;
 }
 
 /* Cultivos Table Container */
-.table-container {
-    max-height: 250px;
+.card-cultivos .table-container {
+    height: 380px;
+    max-height: 380px;
+    flex: 1;
     overflow-y: auto;
     overflow-x: auto;
     width: 100%;
     max-width: 100%;
     border-radius: 4px;
-    border: 1px solid #e0d8c8;
+    border: 1px solid #ded5c5;
     box-sizing: border-box;
+    margin-top: 2px;
 }
 
 .table-container.pdf-mode {
+    height: auto !important;
     max-height: none !important;
     overflow: visible !important;
     border: none !important;
+}
+
+.table-container.pdf-mode .cultivos-table {
+    font-size: 0.65rem !important;
+    line-height: 1.25 !important;
+}
+
+.table-container.pdf-mode .cultivos-table th,
+.table-container.pdf-mode .cultivos-table td {
+    padding: 2.8px 2px !important;
 }
 
 .cultivos-table {
@@ -502,13 +544,51 @@ body {
     border-collapse: collapse;
     font-size: 0.65rem;
     text-align: center;
+    table-layout: fixed;
+    color: #000000;
+}
+
+.cultivos-table th, .cultivos-table td {
+    padding: 3px 2px;
+    border-bottom: 1px solid #e8e1d5;
+    color: #000000;
+    font-weight: 700;
+}
+
+.cultivos-table th:nth-child(1), .cultivos-table td:nth-child(1) {
+    width: 27%; /* CULTIVO */
+    text-align: left;
+    padding-left: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cultivos-table th:nth-child(2), .cultivos-table td:nth-child(2) {
+    width: 28%; /* DERECHOHABIENTES */
+    text-align: center;
+    white-space: nowrap;
+}
+
+.cultivos-table th:nth-child(3), .cultivos-table td:nth-child(3) {
+    width: 27%; /* SUPERFICIE (HA) */
+    text-align: center;
+    white-space: nowrap;
+}
+
+.cultivos-table th:nth-child(4), .cultivos-table td:nth-child(4) {
+    width: 18%; /* % Column */
+    text-align: right;
+    padding-right: 4px;
+    white-space: nowrap;
 }
 
 .cultivos-table th {
-    background-color: #bfa874;
+    background-color: #b58c3a;
     color: #ffffff;
-    padding: 6px 3px;
     font-weight: 800;
+    font-size: 0.63rem;
+    letter-spacing: 0.2px;
     position: sticky;
     top: 0;
     z-index: 10;
@@ -519,52 +599,44 @@ body {
     position: static !important;
 }
 
-.cultivos-table td {
-    padding: 4px 2px;
-    border-bottom: 1px solid #eee;
-    color: #333;
-    white-space: nowrap;
-}
-
 .cultivos-table tr:nth-child(even) {
-    background-color: #f9f7f2;
+    background-color: #fbf9f4;
 }
 
 .total-row {
     font-weight: 800;
     background-color: #e2dac9 !important;
+    color: #000000 !important;
 }
 
-/* Edades Line Chart Container */
-.line-chart-container {
-    height: 220px;
-    position: relative;
-    padding-top: 5px;
-    width: 100%;
+.total-row td {
+    font-weight: 800 !important;
+    padding: 4px 2px !important;
+    border-top: 1.5px solid #b58c3a !important;
 }
 
-/* SECTION 4: ENTREGAS */
+/* SECTION 4: ENTREGAS MENSUALES */
 .section-entregas {
     width: 100%;
 }
 
 .entregas-card {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.94);
     border-radius: 14px;
     padding: 16px;
-    border: 2px solid #ded5c5;
+    border: 1.5px solid #ded5c5;
     box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     width: 100%;
     box-sizing: border-box;
 }
 
 .entregas-title {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     font-weight: 800;
-    color: #0d3629;
+    color: #691c32;
     text-align: center;
     margin-bottom: 12px;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 .entregas-chart-container {
@@ -583,16 +655,31 @@ body {
         padding: 0 10px;
     }
     
+    .meta-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .avance-cards-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
+    }
+
+    .avance-v-divider {
+        display: none;
     }
     
     .section-tri {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .tri-card {
+        height: auto;
+        min-height: 340px;
+        max-height: none;
     }
     
     .card-cultivos {
-        grid-column: span 2;
+        grid-column: span 1;
     }
 }
 
@@ -623,23 +710,17 @@ body {
     }
 
     .report-paper {
-        padding: 12px 8px;
-        border-radius: 4px;
+        padding: 14px 10px;
+        border-radius: 6px;
     }
 
-    .official-header {
-        flex-direction: column;
-        gap: 8px;
-        text-align: center;
-    }
-
-    .program-title {
-        text-align: center;
+    .official-header-img {
+        max-width: 100%;
     }
 
     .meta-cards-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
 
     .avance-cards-grid {
@@ -651,12 +732,16 @@ body {
         grid-template-columns: 1fr;
         gap: 10px;
         width: 100%;
+        height: auto;
     }
 
     .tri-card {
         width: 100%;
         margin: 0;
         padding: 10px 8px;
+        height: auto;
+        min-height: auto;
+        max-height: none;
     }
 
     .card-cultivos {
@@ -671,40 +756,18 @@ body {
         padding: 3px 2px;
     }
 
-    .double-donut-flex {
-        flex-direction: row;
-        gap: 8px;
-    }
-
     .meta-card {
-        padding: 8px 10px;
-        min-height: 80px;
+        padding: 10px 12px;
     }
 
-    .card-value {
-        font-size: 1.2rem;
-    }
-
-    .val-big {
-        font-size: 1.1rem;
+    .meta-card .card-val-big {
+        font-size: 1.25rem;
     }
 }
 
 @media (max-width: 480px) {
-    .meta-cards-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .seal-text-top {
-        font-size: 1.1rem;
-    }
-
-    .fert-title {
-        font-size: 1.2rem;
-    }
-
     .main-banner h1 {
-        font-size: 0.95rem;
+        font-size: 1.15rem;
     }
     
     .cultivos-table {
@@ -714,6 +777,44 @@ body {
     .cultivos-table th, .cultivos-table td {
         padding: 2px 1px;
     }
+}
+
+/* ==========================================================================
+   FORCE DESKTOP LAYOUT AND EXACT 100% EQUAL HEIGHT CARDS FOR PDF EXPORT ONLY
+   ========================================================================== */
+body.force-desktop-pdf .meta-cards-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+
+body.force-desktop-pdf .avance-cards-grid {
+    grid-template-columns: 1fr auto 1fr auto 1fr !important;
+}
+
+body.force-desktop-pdf .avance-v-divider {
+    display: block !important;
+}
+
+body.force-desktop-pdf .official-header-img {
+    max-width: 960px !important;
+}
+
+/* CSS GRID FORCE-STRETCHES ALL 3 CARDS TO THE TALLEST ITEM (CARD-CULTIVOS) */
+body.force-desktop-pdf .section-tri {
+    display: grid !important;
+    grid-template-columns: 1fr 1.55fr 1.05fr !important;
+    align-items: stretch !important;
+    height: auto !important;
+}
+
+body.force-desktop-pdf .tri-card.card-genero,
+body.force-desktop-pdf .tri-card.card-cultivos,
+body.force-desktop-pdf .tri-card.card-edades {
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    padding: 12px 14px !important;
 }
 
 /* Print and PDF Export Styles */
