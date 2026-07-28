@@ -5,9 +5,10 @@ import pandas as pd
 import numpy as np
 import json
 
-DBSURI_DIR = r"c:\Users\pacor\Desktop\ESTADISTICO\DBSURI"
-META_PATH = r"c:\Users\pacor\Desktop\ESTADISTICO\META2026.xlsx"
-OUTPUT_JSON = r"c:\Users\pacor\Desktop\ESTADISTICO\dashboard_data.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DBSURI_DIR = os.path.join(BASE_DIR, "DBSURI")
+META_PATH = os.path.join(BASE_DIR, "META2026.xlsx")
+OUTPUT_JSON = os.path.join(BASE_DIR, "dashboard_data.json")
 
 STATE_NAME_MAPPING = {
     'AGUASCALIENTES': 'AGUASCALIENTES',
