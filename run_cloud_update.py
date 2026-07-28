@@ -20,11 +20,19 @@ async def run_update_pipeline():
     logger.info("  Iniciando Actualización 100% Nube (SURI -> Process -> Posit Cloud)")
     logger.info("=" * 60)
 
-    username = os.environ.get("SURI_USUARIO", "").strip()
-    password = os.environ.get("SURI_PASSWORD", "").strip()
+    username = (
+        os.environ.get("INPUT_USUARIO", "").strip() or 
+        os.environ.get("SECRET_USUARIO", "").strip() or 
+        os.environ.get("SURI_USUARIO", "").strip()
+    )
+    password = (
+        os.environ.get("INPUT_PASSWORD", "").strip() or 
+        os.environ.get("SECRET_PASSWORD", "").strip() or 
+        os.environ.get("SURI_PASSWORD", "").strip()
+    )
 
     if not username or not password:
-        logger.error("❌ Error: Variables de entorno SURI_USUARIO y SURI_PASSWORD no configuradas.")
+        logger.error("❌ Error: Variables de usuario o contraseña SURI no encontradas.")
         sys.exit(1)
 
     logger.info(f"Usuario SURI detectado: {username}")

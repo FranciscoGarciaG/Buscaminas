@@ -39,8 +39,10 @@ jobs:
 
       - name: 5. Descargar SURI y Procesar Datos en la Nube
         env:
-          SURI_USUARIO: ${{ github.event.inputs.usuario != '' && github.event.inputs.usuario || secrets.SURI_USUARIO }}
-          SURI_PASSWORD: ${{ github.event.inputs.password != '' && github.event.inputs.password || secrets.SURI_PASSWORD }}
+          INPUT_USUARIO: ${{ github.event.inputs.usuario }}
+          INPUT_PASSWORD: ${{ github.event.inputs.password }}
+          SECRET_USUARIO: ${{ secrets.SURI_USUARIO }}
+          SECRET_PASSWORD: ${{ secrets.SURI_PASSWORD }}
         run: |
           python run_cloud_update.py
 
