@@ -200,31 +200,10 @@ async def _run_full_pipeline(username: str, password: str):
             })
             return
 
-        # Phase 3: Auto-sync to Posit Cloud
-        broadcast_event({
-            "type": "progress",
-            "message": "☁️ Sincronizando datos actualizados con Posit Cloud...",
-            "level": "info",
-            "progress": 97,
-            "step": "sync",
-        })
-
-        try:
-            await _run_posit_sync()
-            broadcast_event({
-                "type": "progress",
-                "message": "✅ Sincronización con Posit Cloud completada.",
-                "level": "success",
-                "progress": 99,
-                "step": "sync_done",
-            })
-        except Exception as e:
-            logger.warning(f"Posit sync notice: {e}")
-
-        # Phase 4: Signal completion
+        # Phase 3: Signal completion
         broadcast_event({
             "type": "complete",
-            "message": "🎉 ¡Dashboard y Posit Cloud actualizados exitosamente!",
+            "message": "🎉 ¡Dashboard actualizado exitosamente!",
             "level": "success",
             "progress": 100,
             "step": "complete",
@@ -287,26 +266,6 @@ async def _run_process_data() -> bool:
         return False
     except Exception as e:
         logger.error(f"Error running process_data.py: {e}")
-        return False
-
-
-async def _run_posit_sync() -> bool:
-    """Run sync_to_posit.py as subprocess to automatically update Posit Cloud."""
-    try:
-        python_exe = sys.executable
-        sync_script = os.path.join(BASE_DIR, "sync_to_posit.py")
-        if not os.path.exists(sync_script):
-            return False
-        process = await asyncio.create_subprocess_exec(
-            python_exe, sync_script,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=BASE_DIR,
-        )
-        stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=120)
-        return process.returncode == 0
-    except Exception as e:
-        logger.error(f"Posit sync error: {e}")
         return False
 
 

@@ -65,7 +65,7 @@ async function loadData() {
         const resp = await fetch('dashboard_data.json');
         if (!resp.ok) throw new Error('Data file not found');
         globalData = await resp.json();
-        
+
         populateStateDropdown();
         updateDashboard();
     } catch (err) {
@@ -79,11 +79,11 @@ function populateStateDropdown() {
     select.innerHTML = '';
 
     const states = Object.keys(globalData).sort();
-    
+
     const ordered = [];
     if (states.includes('NACIONAL')) ordered.push('NACIONAL');
     if (states.includes('MORELOS')) ordered.push('MORELOS');
-    
+
     states.forEach(s => {
         if (s !== 'MORELOS' && s !== 'NACIONAL') ordered.push(s);
     });
@@ -102,7 +102,7 @@ function updateDashboard() {
     if (!sdata) return;
 
     // 1. Banner Titles
-    const titleText = currentState === 'NACIONAL' 
+    const titleText = currentState === 'NACIONAL'
         ? 'Entregas Nacional 2026'
         : `Entregas en ${currentState} 2026`;
     document.getElementById('banner-title').textContent = titleText;
@@ -111,7 +111,7 @@ function updateDashboard() {
     const dates = Object.keys(sdata.atenciones_por_fecha || {}).sort();
     const maxDate = dates.length > 0 ? dates[dates.length - 1] : selectedDate;
     document.getElementById('banner-subtitle').textContent = formatFechaMexican(maxDate);
-    
+
     if (dates.length > 0 && !dates.includes(selectedDate)) {
         selectedDate = maxDate;
         document.getElementById('date-picker').value = selectedDate;
@@ -399,7 +399,7 @@ function renderEntregasChart(sdata) {
 function exportToPDF() {
     const btnPdf = document.getElementById('btn-export-pdf');
     const originalText = btnPdf ? btnPdf.textContent : '📄 Descargar PDF';
-    
+
     if (btnPdf) {
         btnPdf.disabled = true;
         btnPdf.textContent = '⏳ Generando PDF...';
@@ -522,9 +522,9 @@ function exportToPDF() {
         if (cloneGeneroCanvas) {
             cloneGeneroCanvas.width = 560;
             cloneGeneroCanvas.height = chartAreaHeight * 2;
-            
+
             const barThicknessPx = matchedHeight < 500 ? 70 : 100;
-            
+
             new Chart(cloneGeneroCanvas.getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -558,13 +558,13 @@ function exportToPDF() {
                         }
                     },
                     scales: {
-                        x: { 
-                            ticks: { font: { size: matchedHeight < 500 ? 24 : 28, weight: '800' }, color: '#000000' }, 
-                            grid: { display: false } 
+                        x: {
+                            ticks: { font: { size: matchedHeight < 500 ? 24 : 28, weight: '800' }, color: '#000000' },
+                            grid: { display: false }
                         },
-                        y: { 
+                        y: {
                             display: false,
-                            beginAtZero: true, 
+                            beginAtZero: true,
                             grace: '15%'
                         }
                     }
@@ -751,12 +751,12 @@ function exportToPDF() {
         const pdfHeightPt = heightPx * 0.75;
 
         const opt = {
-            margin:       [0, 0, 0, 0],
-            filename:     `Informe_Fertilizantes_${currentState}_${selectedDate}.pdf`,
-            image:        { type: 'jpeg', quality: 1.0 },
-            html2canvas:  { 
+            margin: [0, 0, 0, 0],
+            filename: `Informe_Fertilizantes_${currentState}_${selectedDate}.pdf`,
+            image: { type: 'jpeg', quality: 1.0 },
+            html2canvas: {
                 scale: 3, // 300 DPI Retina High Definition capture
-                useCORS: true, 
+                useCORS: true,
                 logging: false,
                 x: 0,
                 y: 0,
@@ -766,8 +766,8 @@ function exportToPDF() {
                 scrollY: 0,
                 windowWidth: widthPx
             },
-            jsPDF:        { unit: 'pt', format: [pdfWidthPt, pdfHeightPt], orientation: 'portrait', compress: true },
-            pagebreak:    { mode: [] }
+            jsPDF: { unit: 'pt', format: [pdfWidthPt, pdfHeightPt], orientation: 'portrait', compress: true },
+            pagebreak: { mode: [] }
         };
 
         html2pdf().set(opt).from(clone).save().then(() => {
@@ -891,7 +891,7 @@ function closeUpdateModal() {
 }
 
 async function checkSURISession() {
-    const isCloud = window.location.hostname.includes('posit.cloud') || window.location.hostname.includes('rstudio');
+    const isCloud = window.location.hostname.includes('pages.dev') || window.location.hostname.includes('cloudflare') || window.location.hostname.includes('posit.cloud');
     const pill = document.getElementById('update-session-status');
 
     if (isCloud) {
@@ -900,11 +900,7 @@ async function checkSURISession() {
             pill.style.background = 'rgba(21, 78, 56, 0.12)';
             pill.style.border = '1px solid #154e38';
             pill.style.color = '#154e38';
-            pill.innerHTML = '☁️ <strong>Publicado en Posit Cloud</strong><br>Los datos de este dashboard corresponden al corte más reciente descargado y procesado de SURI. Para realizar descargas en vivo, ejecute el servidor en su equipo local.';
-        }
-        const startBtn = document.getElementById('btn-start-update');
-        if (startBtn) {
-            startBtn.style.display = 'none';
+            pill.innerHTML = '☁️ <strong>Publicado en la Nube (Cloudflare Pages)</strong><br>Al presionar el botón de actualización, los servidores de GitHub Actions descargarán los reportes de SURI y actualizarán el dashboard en vivo.';
         }
         return;
     }
@@ -955,7 +951,7 @@ async function startUpdate() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ usuario, password })
         });
-        
+
         if (!resp.ok) {
             const errData = await resp.json().catch(() => ({}));
             addLogEntry(`❌ Error: ${errData.detail || 'No se pudo iniciar la actualización'}`, 'error');
@@ -984,7 +980,7 @@ function connectUpdateSSE() {
 
     updateEventSource = new EventSource('/api/events');
 
-    updateEventSource.onmessage = function(event) {
+    updateEventSource.onmessage = function (event) {
         try {
             const data = JSON.parse(event.data);
 
@@ -1022,7 +1018,7 @@ function connectUpdateSSE() {
             if (data.level === 'error' && data.step === 'error') {
                 isUpdating = false;
                 document.getElementById('btn-stop-update').textContent = '← Volver';
-                document.getElementById('btn-stop-update').onclick = function() {
+                document.getElementById('btn-stop-update').onclick = function () {
                     document.getElementById('update-login-section').style.display = 'block';
                     document.getElementById('update-progress-section').style.display = 'none';
                     document.getElementById('btn-stop-update').textContent = '⛔ Detener';
@@ -1035,7 +1031,7 @@ function connectUpdateSSE() {
         }
     };
 
-    updateEventSource.onerror = function() {
+    updateEventSource.onerror = function () {
         // SSE connection lost, will auto-reconnect
         console.warn('SSE connection interrupted, reconnecting...');
     };
@@ -1086,7 +1082,7 @@ function addLogEntry(message, level) {
 
     const entry = document.createElement('div');
     entry.className = `log-entry log-${level}`;
-    
+
     const time = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     entry.innerHTML = `<span class="log-time">[${time}]</span> ${message}`;
 
@@ -1105,7 +1101,7 @@ async function reloadDashboardData() {
         }
 
         if (!resp.ok) throw new Error('Data reload failed');
-        
+
         globalData = await resp.json();
         populateStateDropdown();
         updateDashboard();
