@@ -827,6 +827,24 @@ function openUpdateModal() {
         document.getElementById('update-login-section').style.display = 'block';
         document.getElementById('update-progress-section').style.display = 'none';
 
+        const isCloud = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+        const cloudNotice = document.getElementById('cloud-notice-box');
+        const localNotice = document.getElementById('local-notice-box');
+        const dropzone = document.getElementById('csv-dropzone');
+        const uploadBtn = document.getElementById('btn-upload-csvs');
+
+        if (isCloud) {
+            if (cloudNotice) cloudNotice.style.display = 'block';
+            if (localNotice) localNotice.style.display = 'none';
+            if (dropzone) dropzone.style.display = 'none';
+            if (uploadBtn) uploadBtn.style.display = 'none';
+        } else {
+            if (cloudNotice) cloudNotice.style.display = 'none';
+            if (localNotice) localNotice.style.display = 'block';
+            if (dropzone) dropzone.style.display = 'block';
+            if (uploadBtn) uploadBtn.style.display = 'inline-block';
+        }
+
         // Reset file selection
         selectedCSVFiles = [];
         const fileListEl = document.getElementById('csv-file-list');
@@ -834,8 +852,7 @@ function openUpdateModal() {
             fileListEl.innerHTML = '';
             fileListEl.style.display = 'none';
         }
-        const uploadBtn = document.getElementById('btn-upload-csvs');
-        if (uploadBtn) uploadBtn.disabled = true;
+        if (uploadBtn && !isCloud) uploadBtn.disabled = true;
 
         setupDragAndDrop();
     }

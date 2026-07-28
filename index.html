@@ -56,8 +56,24 @@
             <div class="update-modal-body">
                 <!-- CSV Upload Form -->
                 <div id="update-login-section">
-                    <p class="update-modal-desc">Seleccione o arrastre los archivos CSV descargados (Cortes Nacionales y Sinaloa):</p>
-                    
+                    <!-- Notice for Cloudflare Pages (Cloud) -->
+                    <div id="cloud-notice-box" style="display:none; background: rgba(21, 78, 56, 0.1); border: 1px solid #154e38; border-radius: 8px; padding: 14px; margin-bottom: 12px;">
+                        <h4 style="color: #154e38; margin: 0 0 6px 0; font-size: 0.98rem;">☁️ Publicado en la Nube (Cloudflare Pages)</h4>
+                        <p style="font-size: 0.88rem; color: #333; margin: 0 0 10px 0;">Para actualizar la información en esta web pública tienes 2 opciones sencillas:</p>
+                        <ul style="font-size: 0.85rem; color: #222; padding-left: 18px; margin: 0; line-height: 1.5;">
+                            <li style="margin-bottom: 6px;"><strong>Opción 1 (Desde la Nube)</strong>: Ve a la pestaña de GitHub Actions y presiona el botón <strong>"Run workflow"</strong> en <code>process_csv.yml</code>. ¡Se actualizará la web pública en 5 segundos!</li>
+                            <li><strong>Opción 2 (Desde tu PC)</strong>: Ejecuta <code>start_server.bat</code> en tu PC para arrastrar nuevos CSVs y hacer <code>git push</code>.</li>
+                        </ul>
+                        <div style="margin-top: 14px; text-align: center;">
+                            <a href="https://github.com/FranciscoGarciaG/Buscaminas/actions/workflows/process_csv.yml" target="_blank" class="btn-start-update" style="display: inline-block; text-decoration: none; padding: 8px 16px; font-size: 0.85rem;">🚀 Ir a GitHub Actions (Run workflow)</a>
+                        </div>
+                    </div>
+
+                    <!-- Notice for Local Server -->
+                    <div id="local-notice-box" style="display:block;">
+                        <p class="update-modal-desc">Seleccione o arrastre los archivos CSV descargados (Cortes Nacionales y Sinaloa):</p>
+                    </div>
+
                     <div class="csv-dropzone" id="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
                         <div class="dropzone-icon">📥</div>
                         <div class="dropzone-text"><strong>Haga clic aquí</strong> o arrastre sus archivos CSV</div>
@@ -69,7 +85,7 @@
 
                     <div class="update-actions" style="margin-top: 15px;">
                         <button id="btn-upload-csvs" class="btn-start-update" onclick="uploadCSVFiles()" disabled>⚡ Procesar y Actualizar Dashboard</button>
-                        <button class="btn-cancel-update" onclick="closeUpdateModal()">Cancelar</button>
+                        <button class="btn-cancel-update" onclick="closeUpdateModal()">Cerrar</button>
                     </div>
                 </div>
                 <!-- Progress Section (shown during upload/process) -->
