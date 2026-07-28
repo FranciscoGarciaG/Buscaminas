@@ -813,13 +813,6 @@ function formatFechaMexican(dateStr) {
     return dateStr;
 }
 
-const GITHUB_CONFIG = {
-    owner: 'FranciscoGarciaG',
-    repo: 'Buscaminas',
-    workflow: 'process_csv.yml',
-    token: '' // Pega aquí tu token permanentemente si lo deseas
-};
-
 let selectedCSVFiles = [];
 let isUpdating = false;
 
@@ -830,20 +823,8 @@ function openUpdateModal() {
         document.getElementById('update-login-section').style.display = 'block';
         document.getElementById('update-progress-section').style.display = 'none';
 
-        const isCloud = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
-        const cloudNotice = document.getElementById('cloud-notice-box');
         const dropzone = document.getElementById('csv-dropzone');
         const uploadBtn = document.getElementById('btn-upload-csvs');
-
-        if (isCloud) {
-            if (cloudNotice) cloudNotice.style.display = 'block';
-            // Auto-load saved PAT token
-            const savedPat = GITHUB_CONFIG.token || tryLocalStorageGet('github_pat') || '';
-            const patInput = document.getElementById('github-pat-input');
-            if (patInput && savedPat) patInput.value = savedPat;
-        } else {
-            if (cloudNotice) cloudNotice.style.display = 'none';
-        }
 
         if (dropzone) dropzone.style.display = 'block';
         if (uploadBtn) {
@@ -861,16 +842,6 @@ async function uploadCSVFiles() {
         return;
     }
 
-    const isCloud = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
-
-    if (isCloud) {
-        await uploadCSVFilesToGitHub();
-    } else {
-        await uploadCSVFilesToLocalServer();
-    }
-}
-
-async function uploadCSVFilesToLocalServer() {
     isUpdating = true;
 
     // Switch to progress view
@@ -880,8 +851,8 @@ async function uploadCSVFilesToLocalServer() {
     const logEl = document.getElementById('update-log');
     if (logEl) logEl.innerHTML = '';
 
-    updateProgressBar(10, 'Subiendo archivos...');
-    addLogEntry(`📤 Subiendo ${selectedCSVFiles.length} archivos CSV al servidor local...`, 'info');
+    updateProgressBar(15, 'Subiendo archivos...');
+    addLogEntry(`📤 Subiendo ${selectedCSVFiles.length} reporte(s) CSV al servidor...`, 'info');
 
     const formData = new FormData();
     selectedCSVFiles.forEach(file => {
@@ -914,184 +885,8 @@ async function uploadCSVFilesToLocalServer() {
         }
     } catch (e) {
         updateProgressBar(0, 'Error');
-        addLogEntry(`❌ Error de conexión al servidor local: ${e.message}`, 'error');
-        addLogEntry('💡 Asegúrese de ejecutar el servidor con start_server.bat', 'warning');
+        addLogEntry(`❌ Error de conexión al servidor: ${e.message}`, 'error');
         isUpdating = false;
-    }
-}
-
-async function uploadCSVFilesToGitHub() {
-    const patInput = document.getElementById('github-pat-input');
-    const inputToken = patInput ? patInput.value.trim() : '';
-    const pat = GITHUB_CONFIG.token || inputToken || (tryLocalStorageGet('github_pat')) || '';
-
-    if (inputToken) {
-        try { localStorage.setItem('github_pat', inputToken); } catch (e) { }
-    }
-
-    if (!pat) {
-        alert('Por favor ingrese su Token Personal de GitHub (PAT) para subir los archivos CSV a la nube.');
-        return;
-    }
-
-    isUpdating = true;
-
-    // Switch to progress view
-    document.getElementById('update-login-section').style.display = 'none';
-    document.getElementById('update-progress-section').style.display = 'block';
-
-    const logEl = document.getElementById('update-log');
-    if (logEl) logEl.innerHTML = '';
-
-    const repoOwner = GITHUB_CONFIG.owner || 'FranciscoGarciaG';
-    const repoName = GITHUB_CONFIG.repo || 'Buscaminas';
-
-    addLogEntry(`☁️ Iniciando subida directa de ${selectedCSVFiles.length} reporte(s) CSV a GitHub...`, 'info');
-
-    let uploadedCount = 0;
-    const totalFiles = selectedCSVFiles.length;
-
-    for (let i = 0; i < totalFiles; i++) {
-        const file = selectedCSVFiles[i];
-        const stepPct = Math.round(15 + ((i + 1) / totalFiles) * 55);
-        updateProgressBar(stepPct, `Subiendo ${i + 1}/${totalFiles}...`);
-        addLogEntry(`[${i + 1}/${totalFiles}] 📤 Leyendo y subiendo ${file.name}...`, 'info');
-
-        try {
-            const base64Content = await readFileAsBase64(file);
-            
-            // Check if file already exists in GitHub repo to obtain its sha
-            let sha = null;
-            try {
-                const getResp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/DBSURI/${encodeURIComponent(file.name)}`, {
-                    headers: { 'Authorization': `token ${pat}`, 'Accept': 'application/vnd.github.v3+json' }
-                });
-                if (getResp.ok) {
-                    const getJson = await getResp.json();
-                    sha = getJson.sha;
-                }
-            } catch (e) { }
-
-            const putBody = {
-                message: `Actualizar reporte CSV: ${file.name} [Web Upload]`,
-                content: base64Content
-            };
-            if (sha) putBody.sha = sha;
-
-            const putResp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/DBSURI/${encodeURIComponent(file.name)}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${pat}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(putBody)
-            });
-
-            if (putResp.ok || putResp.status === 201 || putResp.status === 200) {
-                uploadedCount++;
-                addLogEntry(`[${i + 1}/${totalFiles}] ✅ ${file.name} subido exitosamente a GitHub.`, 'success');
-            } else {
-                const errJson = await putResp.json().catch(() => ({}));
-                addLogEntry(`[${i + 1}/${totalFiles}] ⚠️ Error subiendo ${file.name}: ${errJson.message || 'Error de API'}`, 'warning');
-            }
-        } catch (err) {
-            addLogEntry(`[${i + 1}/${totalFiles}] ❌ Error procesando ${file.name}: ${err.message}`, 'error');
-        }
-    }
-
-    if (uploadedCount > 0) {
-        updateProgressBar(85, 'Iniciando cálculo...');
-        addLogEntry('🚀 ¡Archivos CSV subidos exitosamente a GitHub!', 'success');
-        addLogEntry('⚙️ GitHub Actions ha iniciado automáticamente el cálculo de datos...', 'info');
-        addLogEntry('⏳ El dashboard se recargará automáticamente en unos segundos.', 'info');
-
-        setTimeout(() => {
-            updateProgressBar(100, 'Completado');
-            addLogEntry('🎉 ¡Dashboard actualizado exitosamente!', 'success');
-            setTimeout(() => {
-                reloadDashboardData();
-            }, 2000);
-        }, 7000);
-    } else {
-        updateProgressBar(0, 'Error');
-        addLogEntry('❌ No se pudo subir ningún archivo CSV a GitHub. Revise su Token PAT.', 'error');
-        isUpdating = false;
-    }
-}
-
-function readFileAsBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const dataUrl = reader.result;
-            const base64 = dataUrl.split(',')[1];
-            resolve(base64);
-        };
-        reader.onerror = error => reject(error);
-        reader.readAsDataURL(file);
-    });
-}
-
-async function triggerGitHubCloudDispatch() {
-    const patInput = document.getElementById('github-pat-input');
-    const inputToken = patInput ? patInput.value.trim() : '';
-    const pat = GITHUB_CONFIG.token || inputToken || (tryLocalStorageGet('github_pat')) || '';
-
-    if (inputToken) {
-        try { localStorage.setItem('github_pat', inputToken); } catch (e) { }
-    }
-
-    if (!pat) {
-        alert('Por favor ingrese su Token Personal de GitHub (PAT) para ejecutar la actualización remota.');
-        return;
-    }
-
-    // Switch to progress view
-    document.getElementById('update-login-section').style.display = 'none';
-    document.getElementById('update-progress-section').style.display = 'block';
-
-    const logEl = document.getElementById('update-log');
-    if (logEl) logEl.innerHTML = '';
-
-    updateProgressBar(25, 'Enviando orden...');
-    addLogEntry('☁️ Conectando con la API de GitHub Actions...', 'info');
-
-    const repoOwner = GITHUB_CONFIG.owner || 'FranciscoGarciaG';
-    const repoName = GITHUB_CONFIG.repo || 'Buscaminas';
-    const workflowId = GITHUB_CONFIG.workflow || 'process_csv.yml';
-
-    try {
-        const resp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/${workflowId}/dispatches`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/vnd.github.v3+json',
-                'Authorization': `token ${pat}`
-            },
-            body: JSON.stringify({ ref: 'main' })
-        });
-
-        if (resp.ok || resp.status === 204) {
-            updateProgressBar(75, 'Ejecutando en la Nube...');
-            addLogEntry('🚀 ¡Servidor de GitHub Actions iniciado exitosamente!', 'success');
-            addLogEntry('⚙️ Procesando reportes CSV y calculando metas...', 'info');
-            addLogEntry('🎉 El dashboard se recargará automáticamente en unos segundos.', 'success');
-
-            setTimeout(() => {
-                updateProgressBar(100, 'Completado');
-                addLogEntry('✅ ¡Actualización finalizada con éxito!', 'success');
-                setTimeout(() => {
-                    reloadDashboardData();
-                }, 2000);
-            }, 6000);
-        } else {
-            const err = await resp.json().catch(() => ({}));
-            updateProgressBar(0, 'Error');
-            addLogEntry(`❌ Error al ejecutar workflow: ${err.message || 'Token inválido o sin permisos.'}`, 'error');
-        }
-    } catch (e) {
-        updateProgressBar(0, 'Error');
-        addLogEntry(`❌ Error de conexión: ${e.message}`, 'error');
     }
 }
 
