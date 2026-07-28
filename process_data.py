@@ -100,6 +100,7 @@ def parse_curp_gender_age(curps):
     return {'hombres': hombres, 'mujeres': mujeres}, age_counts
 
 def identify_national_and_sinaloa_csvs():
+    os.makedirs(DBSURI_DIR, exist_ok=True)
     raw_files = [os.path.join(DBSURI_DIR, f) for f in os.listdir(DBSURI_DIR) if f.lower().endswith('.csv')]
     
     nac_files = []
@@ -121,6 +122,15 @@ def process_all_data():
     df_meta['Estado_Clean'] = df_meta['Estado'].apply(clean_state_name)
     
     active_files = identify_national_and_sinaloa_csvs()
+    if not active_files:
+        print("No CSV files found in DBSURI. Checking for existing dashboard_data.json...")
+        if os.path.exists(OUTPUT_JSON):
+            print("Existing dashboard_data.json found. Pipeline completed cleanly.")
+            return
+        else:
+            print("Notice: No CSV files in DBSURI and no existing dashboard_data.json.")
+            return
+
     print(f"Consolidated Pipeline: Processing 100% of national data from {len(active_files)} primary dataset files (6 Cortes Nacionales + Sinaloa)...")
     
     dfs = []

@@ -1,6 +1,6 @@
-DBSURI/
-CLOWNSURI/
+DBSURI/*.csv
+DBSURI/*.CSV
 browser_user_data/
 __pycache__/
 *.pyc
-dashboard_data.json
+!.gitkeep
