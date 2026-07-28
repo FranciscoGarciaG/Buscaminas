@@ -832,38 +832,205 @@ function openUpdateModal() {
 
         const isCloud = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
         const cloudNotice = document.getElementById('cloud-notice-box');
-        const localNotice = document.getElementById('local-notice-box');
         const dropzone = document.getElementById('csv-dropzone');
         const uploadBtn = document.getElementById('btn-upload-csvs');
 
         if (isCloud) {
             if (cloudNotice) cloudNotice.style.display = 'block';
-            if (localNotice) localNotice.style.display = 'none';
-            if (dropzone) dropzone.style.display = 'none';
-            if (uploadBtn) uploadBtn.style.display = 'none';
-
             // Auto-load saved PAT token
             const savedPat = GITHUB_CONFIG.token || tryLocalStorageGet('github_pat') || '';
             const patInput = document.getElementById('github-pat-input');
             if (patInput && savedPat) patInput.value = savedPat;
         } else {
             if (cloudNotice) cloudNotice.style.display = 'none';
-            if (localNotice) localNotice.style.display = 'block';
-            if (dropzone) dropzone.style.display = 'block';
-            if (uploadBtn) uploadBtn.style.display = 'inline-block';
         }
 
-        // Reset file selection
-        selectedCSVFiles = [];
-        const fileListEl = document.getElementById('csv-file-list');
-        if (fileListEl) {
-            fileListEl.innerHTML = '';
-            fileListEl.style.display = 'none';
+        if (dropzone) dropzone.style.display = 'block';
+        if (uploadBtn) {
+            uploadBtn.style.display = 'inline-block';
+            uploadBtn.disabled = selectedCSVFiles.length === 0;
         }
-        if (uploadBtn && !isCloud) uploadBtn.disabled = true;
 
         setupDragAndDrop();
     }
+}
+
+async function uploadCSVFiles() {
+    if (selectedCSVFiles.length === 0) {
+        alert('Por favor seleccione al menos un archivo CSV.');
+        return;
+    }
+
+    const isCloud = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
+    if (isCloud) {
+        await uploadCSVFilesToGitHub();
+    } else {
+        await uploadCSVFilesToLocalServer();
+    }
+}
+
+async function uploadCSVFilesToLocalServer() {
+    isUpdating = true;
+
+    // Switch to progress view
+    document.getElementById('update-login-section').style.display = 'none';
+    document.getElementById('update-progress-section').style.display = 'block';
+
+    const logEl = document.getElementById('update-log');
+    if (logEl) logEl.innerHTML = '';
+
+    updateProgressBar(10, 'Subiendo archivos...');
+    addLogEntry(`📤 Subiendo ${selectedCSVFiles.length} archivos CSV al servidor local...`, 'info');
+
+    const formData = new FormData();
+    selectedCSVFiles.forEach(file => {
+        formData.append('files', file);
+    });
+
+    try {
+        updateProgressBar(40, 'Procesando datos...');
+        addLogEntry('⚙️ Ejecutando consolidación y cálculo de datos con process_data.py...', 'info');
+
+        const resp = await fetch('/api/upload-csvs', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (resp.ok) {
+            const data = await resp.json();
+            updateProgressBar(90, 'Completado');
+            addLogEntry(`✅ ${data.message}`, 'success');
+
+            addLogEntry('🔄 Actualizando vista del dashboard...', 'info');
+            setTimeout(() => {
+                reloadDashboardData();
+            }, 1000);
+        } else {
+            const err = await resp.json().catch(() => ({}));
+            updateProgressBar(0, 'Error');
+            addLogEntry(`❌ Error en servidor: ${err.detail || 'Fallo al procesar los archivos.'}`, 'error');
+            isUpdating = false;
+        }
+    } catch (e) {
+        updateProgressBar(0, 'Error');
+        addLogEntry(`❌ Error de conexión al servidor local: ${e.message}`, 'error');
+        addLogEntry('💡 Asegúrese de ejecutar el servidor con start_server.bat', 'warning');
+        isUpdating = false;
+    }
+}
+
+async function uploadCSVFilesToGitHub() {
+    const patInput = document.getElementById('github-pat-input');
+    const inputToken = patInput ? patInput.value.trim() : '';
+    const pat = GITHUB_CONFIG.token || inputToken || (tryLocalStorageGet('github_pat')) || '';
+
+    if (inputToken) {
+        try { localStorage.setItem('github_pat', inputToken); } catch (e) { }
+    }
+
+    if (!pat) {
+        alert('Por favor ingrese su Token Personal de GitHub (PAT) para subir los archivos CSV a la nube.');
+        return;
+    }
+
+    isUpdating = true;
+
+    // Switch to progress view
+    document.getElementById('update-login-section').style.display = 'none';
+    document.getElementById('update-progress-section').style.display = 'block';
+
+    const logEl = document.getElementById('update-log');
+    if (logEl) logEl.innerHTML = '';
+
+    const repoOwner = GITHUB_CONFIG.owner || 'FranciscoGarciaG';
+    const repoName = GITHUB_CONFIG.repo || 'Buscaminas';
+
+    addLogEntry(`☁️ Iniciando subida directa de ${selectedCSVFiles.length} reporte(s) CSV a GitHub...`, 'info');
+
+    let uploadedCount = 0;
+    const totalFiles = selectedCSVFiles.length;
+
+    for (let i = 0; i < totalFiles; i++) {
+        const file = selectedCSVFiles[i];
+        const stepPct = Math.round(15 + ((i + 1) / totalFiles) * 55);
+        updateProgressBar(stepPct, `Subiendo ${i + 1}/${totalFiles}...`);
+        addLogEntry(`[${i + 1}/${totalFiles}] 📤 Leyendo y subiendo ${file.name}...`, 'info');
+
+        try {
+            const base64Content = await readFileAsBase64(file);
+            
+            // Check if file already exists in GitHub repo to obtain its sha
+            let sha = null;
+            try {
+                const getResp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/DBSURI/${encodeURIComponent(file.name)}`, {
+                    headers: { 'Authorization': `token ${pat}`, 'Accept': 'application/vnd.github.v3+json' }
+                });
+                if (getResp.ok) {
+                    const getJson = await getResp.json();
+                    sha = getJson.sha;
+                }
+            } catch (e) { }
+
+            const putBody = {
+                message: `Actualizar reporte CSV: ${file.name} [Web Upload]`,
+                content: base64Content
+            };
+            if (sha) putBody.sha = sha;
+
+            const putResp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/DBSURI/${encodeURIComponent(file.name)}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${pat}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(putBody)
+            });
+
+            if (putResp.ok || putResp.status === 201 || putResp.status === 200) {
+                uploadedCount++;
+                addLogEntry(`[${i + 1}/${totalFiles}] ✅ ${file.name} subido exitosamente a GitHub.`, 'success');
+            } else {
+                const errJson = await putResp.json().catch(() => ({}));
+                addLogEntry(`[${i + 1}/${totalFiles}] ⚠️ Error subiendo ${file.name}: ${errJson.message || 'Error de API'}`, 'warning');
+            }
+        } catch (err) {
+            addLogEntry(`[${i + 1}/${totalFiles}] ❌ Error procesando ${file.name}: ${err.message}`, 'error');
+        }
+    }
+
+    if (uploadedCount > 0) {
+        updateProgressBar(85, 'Iniciando cálculo...');
+        addLogEntry('🚀 ¡Archivos CSV subidos exitosamente a GitHub!', 'success');
+        addLogEntry('⚙️ GitHub Actions ha iniciado automáticamente el cálculo de datos...', 'info');
+        addLogEntry('⏳ El dashboard se recargará automáticamente en unos segundos.', 'info');
+
+        setTimeout(() => {
+            updateProgressBar(100, 'Completado');
+            addLogEntry('🎉 ¡Dashboard actualizado exitosamente!', 'success');
+            setTimeout(() => {
+                reloadDashboardData();
+            }, 2000);
+        }, 7000);
+    } else {
+        updateProgressBar(0, 'Error');
+        addLogEntry('❌ No se pudo subir ningún archivo CSV a GitHub. Revise su Token PAT.', 'error');
+        isUpdating = false;
+    }
+}
+
+function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const dataUrl = reader.result;
+            const base64 = dataUrl.split(',')[1];
+            resolve(base64);
+        };
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+    });
 }
 
 async function triggerGitHubCloudDispatch() {

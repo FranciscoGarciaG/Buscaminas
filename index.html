@@ -56,25 +56,13 @@
             <div class="update-modal-body">
                 <!-- CSV Upload Form -->
                 <div id="update-login-section">
-                    <!-- Notice for Cloudflare Pages (Cloud 1-Click Trigger) -->
-                    <div id="cloud-notice-box" style="display:none; background: rgba(21, 78, 56, 0.08); border: 1px solid #154e38; border-radius: 10px; padding: 16px; margin-bottom: 12px;">
-                        <h4 style="color: #154e38; margin: 0 0 6px 0; font-size: 0.98rem;">☁️ Actualización Directa 1-Clic en la Nube</h4>
-                        <p style="font-size: 0.85rem; color: #333; margin: 0 0 10px 0;">Ejecute la consolidación automática en GitHub Actions para refrescar el dashboard en vivo:</p>
-                        
-                        <div class="update-form-group" style="margin-bottom: 10px;">
-                            <label for="github-pat-input" style="font-size: 0.82rem; color: #154e38; font-weight: 700;">Token Personal de GitHub (PAT) (Se guarda en tu navegador):</label>
-                            <input type="password" id="github-pat-input" class="update-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="margin-top: 4px;">
-                        </div>
-
-                        <div style="text-align: center; margin-top: 12px;">
-                            <button id="btn-trigger-cloud-github" class="btn-start-update" onclick="triggerGitHubCloudDispatch()" style="width: 100%; font-size: 0.92rem; padding: 10px;">⚡ 🚀 Iniciar Actualización Nube Ahora</button>
-                        </div>
+                    <!-- Token Input for Cloudflare Pages (Cloud Direct Upload) -->
+                    <div id="cloud-notice-box" style="display:none; background: rgba(21, 78, 56, 0.06); border: 1px solid #154e38; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px;">
+                        <label for="github-pat-input" style="font-size: 0.82rem; color: #154e38; font-weight: 700; display: block; margin-bottom: 4px;">🔐 Token Personal de GitHub (PAT) (Se guarda en tu navegador):</label>
+                        <input type="password" id="github-pat-input" class="update-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width: 100%; box-sizing: border-box;">
                     </div>
 
-                    <!-- Notice for Local Server -->
-                    <div id="local-notice-box" style="display:block;">
-                        <p class="update-modal-desc">Seleccione o arrastre los archivos CSV descargados (Cortes Nacionales y Sinaloa):</p>
-                    </div>
+                    <p class="update-modal-desc">Seleccione o arrastre los archivos CSV descargados (Cortes Nacionales y Sinaloa):</p>
 
                     <div class="csv-dropzone" id="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
                         <div class="dropzone-icon">📥</div>
@@ -87,7 +75,7 @@
 
                     <div class="update-actions" style="margin-top: 15px;">
                         <button id="btn-upload-csvs" class="btn-start-update" onclick="uploadCSVFiles()" disabled>⚡ Procesar y Actualizar Dashboard</button>
-                        <button class="btn-cancel-update" onclick="closeUpdateModal()">Cerrar</button>
+                        <button class="btn-cancel-update" onclick="closeUpdateModal()">Cancelar</button>
                     </div>
                 </div>
                 <!-- Progress Section (shown during upload/process) -->
