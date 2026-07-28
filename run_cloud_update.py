@@ -35,7 +35,7 @@ async def run_update_pipeline():
         logger.error("❌ Error: Variables de usuario o contraseña SURI no encontradas.")
         sys.exit(1)
 
-    logger.info(f"Usuario SURI detectado: {username}")
+    logger.info(f"Usuario SURI detectado: '{username}' | Longitud de Contraseña: {len(password)} caracteres")
     logger.info("Iniciando descargador SURI con Playwright Headless...")
 
     downloader = SURIDownloader(downloads_dir=DBSURI_DIR, user_data_dir=os.path.join(BASE_DIR, "browser_user_data"))
