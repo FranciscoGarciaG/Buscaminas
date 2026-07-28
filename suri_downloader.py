@@ -247,17 +247,17 @@ class SURIDownloader:
                 self.emit("Enviando formulario de login...", "info", 13, "login")
                 await submit_btn.click()
                 try:
-                    await self.page.wait_for_load_state("domcontentloaded", timeout=15000)
+                    await self.page.wait_for_url(lambda u: "login" not in u or "home" in u or "sigap" in u or "reportes" in u, timeout=12000)
                 except Exception:
                     pass
                 await asyncio.sleep(3)
 
             url_after = self.page.url
-            if "login" not in url_after or "home" in url_after or "sigap" in url_after:
+            if "login" not in url_after or "home" in url_after or "sigap" in url_after or "reportes" in url_after:
                 self.emit("✅ Inicio de sesión exitoso.", "success", 15, "login")
                 return True
             else:
-                self.emit("⚠️ No se pudo verificar el login. Revise credenciales.", "warning", 0, "login")
+                self.emit(f"⚠️ No se pudo verificar el login (URL actual: {url_after}). Revise credenciales SURI_PASSWORD en GitHub Secrets.", "warning", 0, "login")
                 return False
         except Exception as e:
             self.emit(f"❌ Error en login: {e}", "error", 0, "login")
