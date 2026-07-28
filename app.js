@@ -813,9 +813,12 @@ function formatFechaMexican(dateStr) {
     return dateStr;
 }
 
-// ==========================================================================
-// Manual CSV Upload System (Drag & Drop + Processing)
-// ==========================================================================
+const GITHUB_CONFIG = {
+    owner: 'FranciscoGarciaG',
+    repo: 'Buscaminas',
+    workflow: 'process_csv.yml',
+    token: '' // Pega aquí tu token permanentemente si lo deseas
+};
 
 let selectedCSVFiles = [];
 let isUpdating = false;
@@ -838,6 +841,11 @@ function openUpdateModal() {
             if (localNotice) localNotice.style.display = 'none';
             if (dropzone) dropzone.style.display = 'none';
             if (uploadBtn) uploadBtn.style.display = 'none';
+
+            // Auto-load saved PAT token
+            const savedPat = GITHUB_CONFIG.token || tryLocalStorageGet('github_pat') || '';
+            const patInput = document.getElementById('github-pat-input');
+            if (patInput && savedPat) patInput.value = savedPat;
         } else {
             if (cloudNotice) cloudNotice.style.display = 'none';
             if (localNotice) localNotice.style.display = 'block';
@@ -856,6 +864,72 @@ function openUpdateModal() {
 
         setupDragAndDrop();
     }
+}
+
+async function triggerGitHubCloudDispatch() {
+    const patInput = document.getElementById('github-pat-input');
+    const inputToken = patInput ? patInput.value.trim() : '';
+    const pat = GITHUB_CONFIG.token || inputToken || (tryLocalStorageGet('github_pat')) || '';
+
+    if (inputToken) {
+        try { localStorage.setItem('github_pat', inputToken); } catch (e) { }
+    }
+
+    if (!pat) {
+        alert('Por favor ingrese su Token Personal de GitHub (PAT) para ejecutar la actualización remota.');
+        return;
+    }
+
+    // Switch to progress view
+    document.getElementById('update-login-section').style.display = 'none';
+    document.getElementById('update-progress-section').style.display = 'block';
+
+    const logEl = document.getElementById('update-log');
+    if (logEl) logEl.innerHTML = '';
+
+    updateProgressBar(25, 'Enviando orden...');
+    addLogEntry('☁️ Conectando con la API de GitHub Actions...', 'info');
+
+    const repoOwner = GITHUB_CONFIG.owner || 'FranciscoGarciaG';
+    const repoName = GITHUB_CONFIG.repo || 'Buscaminas';
+    const workflowId = GITHUB_CONFIG.workflow || 'process_csv.yml';
+
+    try {
+        const resp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/${workflowId}/dispatches`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/vnd.github.v3+json',
+                'Authorization': `token ${pat}`
+            },
+            body: JSON.stringify({ ref: 'main' })
+        });
+
+        if (resp.ok || resp.status === 204) {
+            updateProgressBar(75, 'Ejecutando en la Nube...');
+            addLogEntry('🚀 ¡Servidor de GitHub Actions iniciado exitosamente!', 'success');
+            addLogEntry('⚙️ Procesando reportes CSV y calculando metas...', 'info');
+            addLogEntry('🎉 El dashboard se recargará automáticamente en unos segundos.', 'success');
+
+            setTimeout(() => {
+                updateProgressBar(100, 'Completado');
+                addLogEntry('✅ ¡Actualización finalizada con éxito!', 'success');
+                setTimeout(() => {
+                    reloadDashboardData();
+                }, 2000);
+            }, 6000);
+        } else {
+            const err = await resp.json().catch(() => ({}));
+            updateProgressBar(0, 'Error');
+            addLogEntry(`❌ Error al ejecutar workflow: ${err.message || 'Token inválido o sin permisos.'}`, 'error');
+        }
+    } catch (e) {
+        updateProgressBar(0, 'Error');
+        addLogEntry(`❌ Error de conexión: ${e.message}`, 'error');
+    }
+}
+
+function tryLocalStorageGet(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
 }
 
 function closeUpdateModal() {

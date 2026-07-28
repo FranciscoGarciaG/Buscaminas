@@ -56,16 +56,18 @@
             <div class="update-modal-body">
                 <!-- CSV Upload Form -->
                 <div id="update-login-section">
-                    <!-- Notice for Cloudflare Pages (Cloud) -->
-                    <div id="cloud-notice-box" style="display:none; background: rgba(21, 78, 56, 0.1); border: 1px solid #154e38; border-radius: 8px; padding: 14px; margin-bottom: 12px;">
-                        <h4 style="color: #154e38; margin: 0 0 6px 0; font-size: 0.98rem;">☁️ Publicado en la Nube (Cloudflare Pages)</h4>
-                        <p style="font-size: 0.88rem; color: #333; margin: 0 0 10px 0;">Para actualizar la información en esta web pública tienes 2 opciones sencillas:</p>
-                        <ul style="font-size: 0.85rem; color: #222; padding-left: 18px; margin: 0; line-height: 1.5;">
-                            <li style="margin-bottom: 6px;"><strong>Opción 1 (Desde la Nube)</strong>: Ve a la pestaña de GitHub Actions y presiona el botón <strong>"Run workflow"</strong> en <code>process_csv.yml</code>. ¡Se actualizará la web pública en 5 segundos!</li>
-                            <li><strong>Opción 2 (Desde tu PC)</strong>: Ejecuta <code>start_server.bat</code> en tu PC para arrastrar nuevos CSVs y hacer <code>git push</code>.</li>
-                        </ul>
-                        <div style="margin-top: 14px; text-align: center;">
-                            <a href="https://github.com/FranciscoGarciaG/Buscaminas/actions/workflows/process_csv.yml" target="_blank" class="btn-start-update" style="display: inline-block; text-decoration: none; padding: 8px 16px; font-size: 0.85rem;">🚀 Ir a GitHub Actions (Run workflow)</a>
+                    <!-- Notice for Cloudflare Pages (Cloud 1-Click Trigger) -->
+                    <div id="cloud-notice-box" style="display:none; background: rgba(21, 78, 56, 0.08); border: 1px solid #154e38; border-radius: 10px; padding: 16px; margin-bottom: 12px;">
+                        <h4 style="color: #154e38; margin: 0 0 6px 0; font-size: 0.98rem;">☁️ Actualización Directa 1-Clic en la Nube</h4>
+                        <p style="font-size: 0.85rem; color: #333; margin: 0 0 10px 0;">Ejecute la consolidación automática en GitHub Actions para refrescar el dashboard en vivo:</p>
+                        
+                        <div class="update-form-group" style="margin-bottom: 10px;">
+                            <label for="github-pat-input" style="font-size: 0.82rem; color: #154e38; font-weight: 700;">Token Personal de GitHub (PAT) (Se guarda en tu navegador):</label>
+                            <input type="password" id="github-pat-input" class="update-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="margin-top: 4px;">
+                        </div>
+
+                        <div style="text-align: center; margin-top: 12px;">
+                            <button id="btn-trigger-cloud-github" class="btn-start-update" onclick="triggerGitHubCloudDispatch()" style="width: 100%; font-size: 0.92rem; padding: 10px;">⚡ 🚀 Iniciar Actualización Nube Ahora</button>
                         </div>
                     </div>
 
