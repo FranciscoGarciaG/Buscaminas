@@ -114,6 +114,11 @@ def identify_national_and_sinaloa_csvs():
             sinaloa_file = f
             
     combined = sorted(list(set(nac_files + ([sinaloa_file] if sinaloa_file else []))))
+    
+    # Fallback: Si los nombres no contienen 'NACIONAL' o 'SINALOA', procesar todos los archivos .csv en DBSURI
+    if not combined and raw_files:
+        combined = sorted(raw_files)
+
     return combined
 
 def process_all_data():

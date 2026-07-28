@@ -97,7 +97,9 @@ async def upload_csv_files(files: List[UploadFile] = File(...)):
             "saved_files": saved_files
         })
     except Exception as e:
-        logger.error(f"Error procesando datos: {e}")
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(f"Error procesando datos: {e}\n{tb}")
         raise HTTPException(status_code=500, detail=f"Error al procesar datos CSV: {str(e)}")
 
 
