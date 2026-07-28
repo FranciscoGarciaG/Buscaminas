@@ -229,35 +229,61 @@ class SURIDownloader:
                 raise Exception("No se encontró el campo de usuario en la página de login.")
 
             if user_input:
-                await user_input.fill(username)
+                await user_input.focus()
+                await user_input.fill("")
+                await user_input.type(username, delay=30)
                 self.emit(f"Usuario '{username}' ingresado.", "info", 11, "login")
 
             pass_input = await self.page.query_selector(
-                "input[name='password'], input[type='password']"
+                "#ln_password, input[name='ln_password'], input[name='password'], input[type='password']"
             )
             if pass_input:
-                await pass_input.fill(password)
+                await pass_input.focus()
+                await pass_input.fill("")
+                await pass_input.type(password, delay=30)
                 self.emit("Contraseña ingresada.", "info", 12, "login")
 
-            submit_btn = await self.page.query_selector(
-                "form#formLogin input[type='submit'], #formLogin input.btn-success, "
-                "input[type='submit'], button[type='submit']"
-            )
-            if submit_btn:
-                self.emit("Enviando formulario de login...", "info", 13, "login")
-                await submit_btn.click()
-                try:
-                    await self.page.wait_for_url(lambda u: "login" not in u or "home" in u or "sigap" in u or "reportes" in u, timeout=12000)
-                except Exception:
-                    pass
-                await asyncio.sleep(3)
+            self.emit("Enviando formulario de login...", "info", 13, "login")
+            
+            # Submit via Enter key on password input first
+            if pass_input:
+                await pass_input.press("Enter")
+                await asyncio.sleep(2)
+
+            # Fallback submit button click if still on login
+            if "login" in self.page.url:
+                submit_btn = await self.page.query_selector(
+                    "form#formLogin input[type='submit'], #formLogin input.btn-success, "
+                    "input[type='submit'], button[type='submit'], #btn_login, button:has-text('Iniciar'), input[value*='Iniciar']"
+                )
+                if submit_btn:
+                    await submit_btn.click()
+
+            try:
+                await self.page.wait_for_url(lambda u: "login" not in u or "home" in u or "sigap" in u or "reportes" in u, timeout=15000)
+            except Exception:
+                pass
+
+            await asyncio.sleep(3)
 
             url_after = self.page.url
             if "login" not in url_after or "home" in url_after or "sigap" in url_after or "reportes" in url_after:
                 self.emit("✅ Inicio de sesión exitoso.", "success", 15, "login")
                 return True
             else:
-                self.emit(f"⚠️ No se pudo verificar el login (URL actual: {url_after}). Revise credenciales SURI_PASSWORD en GitHub Secrets.", "warning", 0, "login")
+                # Capture page error message for precise diagnosis
+                error_msg = ""
+                try:
+                    err_elem = await self.page.query_selector(".alert, .alert-danger, .error, .help-block, .invalid-feedback, #msg_error")
+                    if err_elem:
+                        error_msg = await err_elem.inner_text()
+                except Exception:
+                    pass
+
+                if error_msg:
+                    self.emit(f"⚠️ Mensaje de SURI: '{error_msg.strip()}'", "warning", 0, "login")
+                else:
+                    self.emit(f"⚠️ No se pudo verificar el login (URL actual: {url_after}). Revise credenciales SURI_PASSWORD en GitHub Secrets.", "warning", 0, "login")
                 return False
         except Exception as e:
             self.emit(f"❌ Error en login: {e}", "error", 0, "login")
