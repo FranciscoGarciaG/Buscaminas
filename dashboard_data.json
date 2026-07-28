@@ -773,13 +773,13 @@
       "hectareas": 53723.0
     },
     "avance": {
-      "atendidos": 28361,
+      "atendidos": 28362,
       "pct_derechohabientes": 98.37,
-      "dap_entregada": 5364.5,
+      "dap_entregada": 5364.6,
       "pct_dap": 98.4,
-      "urea_entregada": 10490.9,
+      "urea_entregada": 10491.1,
       "pct_urea": 98.4,
-      "ha_atendidas": 52862.0,
+      "ha_atendidas": 52863.0,
       "pct_ha": 98.4
     },
     "atenciones_por_fecha": {
@@ -861,10 +861,11 @@
       "2026-05-10": 1,
       "2026-07-25": 1,
       "2026-06-21": 1,
-      "2026-06-28": 1
+      "2026-06-28": 1,
+      "2026-07-28": 1
     },
     "genero": {
-      "hombres": 16024,
+      "hombres": 16025,
       "mujeres": 12337
     },
     "cultivos": [
@@ -872,13 +873,13 @@
         "cultivo": "MAIZ",
         "derechohabientes": 25255,
         "superficie": 48144.0,
-        "porcentaje": "91.0749%"
+        "porcentaje": "91.0732%"
       },
       {
         "cultivo": "CAÑA DE AZUCAR",
-        "derechohabientes": 2218,
-        "superficie": 3054.0,
-        "porcentaje": "5.7773%"
+        "derechohabientes": 2219,
+        "superficie": 3055.0,
+        "porcentaje": "5.7791%"
       },
       {
         "cultivo": "MILPA",
@@ -925,7 +926,7 @@
     ],
     "edades": {
       "18-30": 3422,
-      "31-40": 5148,
+      "31-40": 5149,
       "41-50": 5732,
       "51-60": 5747,
       "61-70": 4330,
@@ -953,7 +954,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 452
+        "conteo": 453
       }
     ],
     "entregas_ceda": [
@@ -1078,7 +1079,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 15
+            "conteo": 16
           }
         ]
       },
@@ -4049,14 +4050,14 @@
       "hectareas": 79607.0
     },
     "avance": {
-      "atendidos": 39790,
-      "pct_derechohabientes": 95.58,
-      "dap_entregada": 8802.35,
+      "atendidos": 39792,
+      "pct_derechohabientes": 95.59,
+      "dap_entregada": 8802.75,
       "pct_dap": 95.57,
-      "urea_entregada": 13011.45,
-      "pct_urea": 95.49,
-      "ha_atendidas": 76081.0,
-      "pct_ha": 95.57
+      "urea_entregada": 13012.05,
+      "pct_urea": 95.5,
+      "ha_atendidas": 76085.0,
+      "pct_ha": 95.58
     },
     "atenciones_por_fecha": {
       "2026-04-24": 1743,
@@ -4118,7 +4119,7 @@
       "2026-06-11": 174,
       "2026-05-30": 151,
       "2026-06-04": 149,
-      "2026-07-27": 142,
+      "2026-07-27": 143,
       "2026-07-22": 127,
       "2026-06-17": 127,
       "2026-07-21": 125,
@@ -4161,39 +4162,40 @@
       "2026-05-24": 2,
       "2026-05-17": 2,
       "2026-07-26": 2,
+      "2026-07-28": 1,
       "2026-06-28": 1,
       "2026-04-19": 1,
       "2026-04-26": 1,
       "2026-06-07": 1
     },
     "genero": {
-      "hombres": 24627,
+      "hombres": 24629,
       "mujeres": 15163
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
-        "derechohabientes": 22365,
-        "superficie": 42091.0,
-        "porcentaje": "55.3239%"
+        "derechohabientes": 22366,
+        "superficie": 42093.0,
+        "porcentaje": "55.3237%"
       },
       {
         "cultivo": "MILPA",
         "derechohabientes": 7799,
         "superficie": 15032.0,
-        "porcentaje": "19.7579%"
+        "porcentaje": "19.7569%"
       },
       {
         "cultivo": "FRIJOL",
-        "derechohabientes": 5138,
-        "superficie": 10105.0,
-        "porcentaje": "13.2819%"
+        "derechohabientes": 5139,
+        "superficie": 10107.0,
+        "porcentaje": "13.2838%"
       },
       {
         "cultivo": "AVENA GRANO",
         "derechohabientes": 4027,
         "superficie": 7939.0,
-        "porcentaje": "10.4349%"
+        "porcentaje": "10.4344%"
       },
       {
         "cultivo": "SORGO GRANO",
@@ -4224,7 +4226,7 @@
       "18-30": 1162,
       "31-40": 4059,
       "41-50": 6548,
-      "51-60": 9279,
+      "51-60": 9281,
       "61-70": 9332,
       "71-80": 6371,
       "81-90": 2696,
@@ -4250,7 +4252,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 1360
+        "conteo": 1362
       }
     ],
     "entregas_ceda": [
@@ -4400,7 +4402,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 2
+            "conteo": 3
           }
         ]
       },
@@ -5275,7 +5277,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 2
+            "conteo": 3
           }
         ]
       },
@@ -6672,14 +6674,14 @@
       "hectareas": 102741.0
     },
     "avance": {
-      "atendidos": 44934,
-      "pct_derechohabientes": 85.87,
-      "dap_entregada": 11328.3,
-      "pct_dap": 87.6,
-      "urea_entregada": 11328.3,
-      "pct_urea": 87.6,
-      "ha_atendidas": 88145.0,
-      "pct_ha": 85.79
+      "atendidos": 44935,
+      "pct_derechohabientes": 85.88,
+      "dap_entregada": 11328.6,
+      "pct_dap": 87.61,
+      "urea_entregada": 11328.6,
+      "pct_urea": 87.61,
+      "ha_atendidas": 88147.0,
+      "pct_ha": 85.8
     },
     "atenciones_por_fecha": {
       "2026-05-06": 2671,
@@ -6762,32 +6764,33 @@
       "2026-07-05": 2,
       "2026-07-26": 2,
       "2026-07-19": 1,
+      "2026-07-28": 1,
       "2026-06-28": 1,
       "2026-06-07": 1,
       "2023-03-06": 1
     },
     "genero": {
-      "hombres": 28650,
+      "hombres": 28651,
       "mujeres": 16284
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
-        "derechohabientes": 23420,
-        "superficie": 45633.0,
-        "porcentaje": "51.7704%"
+        "derechohabientes": 23421,
+        "superficie": 45635.0,
+        "porcentaje": "51.7715%"
       },
       {
         "cultivo": "FRIJOL",
         "derechohabientes": 19171,
         "superficie": 37869.0,
-        "porcentaje": "42.9622%"
+        "porcentaje": "42.9612%"
       },
       {
         "cultivo": "AVENA GRANO",
         "derechohabientes": 1547,
         "superficie": 3065.0,
-        "porcentaje": "3.4772%"
+        "porcentaje": "3.4771%"
       },
       {
         "cultivo": "MILPA",
@@ -6799,7 +6802,7 @@
         "cultivo": "SORGO GRANO",
         "derechohabientes": 286,
         "superficie": 570.0,
-        "porcentaje": "0.6467%"
+        "porcentaje": "0.6466%"
       },
       {
         "cultivo": "TRIGO GRANO",
@@ -6826,7 +6829,7 @@
       "41-50": 6418,
       "51-60": 9703,
       "61-70": 10107,
-      "71-80": 7307,
+      "71-80": 7308,
       "81-90": 3551,
       "91-100": 533,
       "100-120": 9
@@ -6850,7 +6853,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 10181
+        "conteo": 10182
       }
     ],
     "entregas_ceda": [
@@ -7800,7 +7803,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 56
+            "conteo": 57
           }
         ]
       },
@@ -8719,14 +8722,14 @@
       "hectareas": 520479.0
     },
     "avance": {
-      "atendidos": 310591,
-      "pct_derechohabientes": 93.78,
-      "dap_entregada": 73162.25,
-      "pct_dap": 93.71,
-      "urea_entregada": 73162.45,
-      "pct_urea": 93.71,
-      "ha_atendidas": 487749.0,
-      "pct_ha": 93.71
+      "atendidos": 310699,
+      "pct_derechohabientes": 93.82,
+      "dap_entregada": 73188.2,
+      "pct_dap": 93.74,
+      "urea_entregada": 73188.4,
+      "pct_urea": 93.74,
+      "ha_atendidas": 487922.0,
+      "pct_ha": 93.74
     },
     "atenciones_por_fecha": {
       "2026-03-16": 8067,
@@ -8745,7 +8748,7 @@
       "2026-03-10": 6452,
       "2026-03-27": 6445,
       "2026-03-24": 6346,
-      "2026-07-27": 6241,
+      "2026-07-27": 6337,
       "2026-04-08": 6149,
       "2026-04-07": 5823,
       "2026-03-25": 5681,
@@ -8837,44 +8840,44 @@
       "2026-05-27": 106,
       "2026-07-25": 84,
       "2026-03-15": 79,
+      "2026-07-28": 15,
       "2026-06-14": 9,
-      "2026-07-28": 3,
       "2026-03-22": 2
     },
     "genero": {
-      "hombres": 151416,
-      "mujeres": 159175
+      "hombres": 151470,
+      "mujeres": 159229
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
-        "derechohabientes": 272363,
-        "superficie": 425320.0,
-        "porcentaje": "87.2006%"
+        "derechohabientes": 272452,
+        "superficie": 425461.0,
+        "porcentaje": "87.1986%"
       },
       {
         "cultivo": "MILPA",
-        "derechohabientes": 25234,
-        "superficie": 45756.0,
-        "porcentaje": "9.3811%"
+        "derechohabientes": 25245,
+        "superficie": 45777.0,
+        "porcentaje": "9.3820%"
       },
       {
         "cultivo": "FRIJOL",
-        "derechohabientes": 8244,
-        "superficie": 10696.0,
-        "porcentaje": "2.1929%"
+        "derechohabientes": 8245,
+        "superficie": 10697.0,
+        "porcentaje": "2.1924%"
       },
       {
         "cultivo": "CAFE",
-        "derechohabientes": 4090,
-        "superficie": 5029.0,
-        "porcentaje": "1.0311%"
+        "derechohabientes": 4096,
+        "superficie": 5037.0,
+        "porcentaje": "1.0323%"
       },
       {
         "cultivo": "ARROZ",
-        "derechohabientes": 482,
-        "superficie": 670.0,
-        "porcentaje": "0.1374%"
+        "derechohabientes": 483,
+        "superficie": 672.0,
+        "porcentaje": "0.1377%"
       },
       {
         "cultivo": "CACAO",
@@ -8926,14 +8929,14 @@
       }
     ],
     "edades": {
-      "18-30": 18694,
-      "31-40": 55431,
-      "41-50": 65063,
-      "51-60": 66935,
-      "61-70": 53778,
-      "71-80": 33708,
-      "81-90": 14455,
-      "91-100": 2434,
+      "18-30": 18700,
+      "31-40": 55463,
+      "41-50": 65088,
+      "51-60": 66959,
+      "61-70": 53794,
+      "71-80": 33710,
+      "81-90": 14457,
+      "91-100": 2435,
       "100-120": 93
     },
     "entregas_mes": [
@@ -8955,7 +8958,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 20972
+        "conteo": 21080
       }
     ],
     "entregas_ceda": [
@@ -9230,7 +9233,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 550
+            "conteo": 551
           }
         ]
       },
@@ -10605,7 +10608,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 1
+            "conteo": 96
           }
         ]
       },
@@ -11030,7 +11033,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 700
+            "conteo": 703
           }
         ]
       },
@@ -11280,7 +11283,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 22
+            "conteo": 25
           }
         ]
       },
@@ -11780,7 +11783,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 138
+            "conteo": 139
           }
         ]
       },
@@ -11930,7 +11933,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 345
+            "conteo": 350
           }
         ]
       },
@@ -12169,14 +12172,14 @@
       "hectareas": 109258.0
     },
     "avance": {
-      "atendidos": 66807,
-      "pct_derechohabientes": 95.8,
-      "dap_entregada": 12342.55,
-      "pct_dap": 96.09,
-      "urea_entregada": 18965.25,
-      "pct_urea": 95.98,
-      "ha_atendidas": 104919.0,
-      "pct_ha": 96.03
+      "atendidos": 66826,
+      "pct_derechohabientes": 95.83,
+      "dap_entregada": 12345.1,
+      "pct_dap": 96.11,
+      "urea_entregada": 18969.9,
+      "pct_urea": 96.0,
+      "ha_atendidas": 104943.0,
+      "pct_ha": 96.05
     },
     "atenciones_por_fecha": {
       "2026-05-08": 2939,
@@ -12251,57 +12254,58 @@
       "2026-07-27": 45,
       "2026-07-25": 35,
       "2026-07-12": 27,
+      "2026-07-28": 19,
       "2026-06-07": 3,
       "2026-05-24": 1,
       "2026-07-19": 1,
       "2026-06-28": 1
     },
     "genero": {
-      "hombres": 45279,
-      "mujeres": 21528
+      "hombres": 45294,
+      "mujeres": 21532
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
-        "derechohabientes": 42645,
-        "superficie": 65670.0,
-        "porcentaje": "62.5911%"
+        "derechohabientes": 42662,
+        "superficie": 65691.0,
+        "porcentaje": "62.5968%"
       },
       {
         "cultivo": "MILPA",
-        "derechohabientes": 12666,
-        "superficie": 19512.0,
-        "porcentaje": "18.5972%"
+        "derechohabientes": 12668,
+        "superficie": 19515.0,
+        "porcentaje": "18.5958%"
       },
       {
         "cultivo": "CEBADA GRANO",
         "derechohabientes": 6061,
         "superficie": 11930.0,
-        "porcentaje": "11.3707%"
+        "porcentaje": "11.3681%"
       },
       {
         "cultivo": "CAFE",
         "derechohabientes": 2505,
         "superficie": 2949.0,
-        "porcentaje": "2.8107%"
+        "porcentaje": "2.8101%"
       },
       {
         "cultivo": "AVENA GRANO",
         "derechohabientes": 1256,
         "superficie": 2405.0,
-        "porcentaje": "2.2922%"
+        "porcentaje": "2.2917%"
       },
       {
         "cultivo": "FRIJOL",
         "derechohabientes": 1105,
         "superficie": 1679.0,
-        "porcentaje": "1.6003%"
+        "porcentaje": "1.5999%"
       },
       {
         "cultivo": "CAÑA DE AZUCAR",
         "derechohabientes": 448,
         "superficie": 557.0,
-        "porcentaje": "0.5309%"
+        "porcentaje": "0.5308%"
       },
       {
         "cultivo": "TRIGO GRANO",
@@ -12342,13 +12346,13 @@
     ],
     "edades": {
       "18-30": 911,
-      "31-40": 3858,
-      "41-50": 9161,
-      "51-60": 15225,
-      "61-70": 17783,
-      "71-80": 13316,
-      "81-90": 5702,
-      "91-100": 830,
+      "31-40": 3861,
+      "41-50": 9166,
+      "51-60": 15226,
+      "61-70": 17787,
+      "71-80": 13317,
+      "81-90": 5706,
+      "91-100": 831,
       "100-120": 21
     },
     "entregas_mes": [
@@ -12370,7 +12374,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 5103
+        "conteo": 5122
       }
     ],
     "entregas_ceda": [
@@ -12595,7 +12599,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 33
+            "conteo": 34
           }
         ]
       },
@@ -12945,7 +12949,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 1346
+            "conteo": 1347
           }
         ]
       },
@@ -13120,7 +13124,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 885
+            "conteo": 902
           }
         ]
       },
@@ -13234,13 +13238,13 @@
       "hectareas": 117154.0
     },
     "avance": {
-      "atendidos": 56123,
-      "pct_derechohabientes": 90.35,
-      "dap_entregada": 7045.85,
+      "atendidos": 56125,
+      "pct_derechohabientes": 90.36,
+      "dap_entregada": 7046.15,
       "pct_dap": 89.52,
-      "urea_entregada": 24669.85,
+      "urea_entregada": 24670.75,
       "pct_urea": 90.79,
-      "ha_atendidas": 106049.0,
+      "ha_atendidas": 106053.0,
       "pct_ha": 90.52
     },
     "atenciones_por_fecha": {
@@ -13302,7 +13306,7 @@
       "2026-05-23": 399,
       "2026-07-01": 395,
       "2026-05-27": 387,
-      "2026-07-27": 353,
+      "2026-07-27": 354,
       "2026-05-29": 338,
       "2026-07-07": 325,
       "2026-05-26": 316,
@@ -13314,30 +13318,31 @@
       "2026-07-06": 58,
       "2026-07-04": 58,
       "2026-07-12": 52,
-      "2026-07-19": 21
+      "2026-07-19": 21,
+      "2026-07-28": 1
     },
     "genero": {
-      "hombres": 38941,
-      "mujeres": 17182
+      "hombres": 38942,
+      "mujeres": 17183
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
-        "derechohabientes": 39511,
-        "superficie": 77044.0,
-        "porcentaje": "72.6494%"
+        "derechohabientes": 39512,
+        "superficie": 77046.0,
+        "porcentaje": "72.6486%"
       },
       {
         "cultivo": "CAÑA DE AZUCAR",
-        "derechohabientes": 12972,
-        "superficie": 21922.0,
-        "porcentaje": "20.6716%"
+        "derechohabientes": 12973,
+        "superficie": 21924.0,
+        "porcentaje": "20.6727%"
       },
       {
         "cultivo": "MILPA",
         "derechohabientes": 1865,
         "superficie": 3623.0,
-        "porcentaje": "3.4163%"
+        "porcentaje": "3.4162%"
       },
       {
         "cultivo": "SORGO GRANO",
@@ -13414,10 +13419,10 @@
     ],
     "edades": {
       "18-30": 1951,
-      "31-40": 4455,
+      "31-40": 4456,
       "41-50": 7774,
       "51-60": 12248,
-      "61-70": 13138,
+      "61-70": 13139,
       "71-80": 10471,
       "81-90": 5270,
       "91-100": 796,
@@ -13442,7 +13447,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 15429
+        "conteo": 15431
       }
     ],
     "entregas_ceda": [
@@ -13467,7 +13472,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 799
+            "conteo": 800
           }
         ]
       },
@@ -13867,7 +13872,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 143
+            "conteo": 144
           }
         ]
       },
@@ -15934,13 +15939,13 @@
       "hectareas": 30189.0
     },
     "avance": {
-      "atendidos": 17499,
+      "atendidos": 17500,
       "pct_derechohabientes": 96.25,
-      "dap_entregada": 3086.7,
+      "dap_entregada": 3086.8,
       "pct_dap": 96.44,
-      "urea_entregada": 5640.9,
+      "urea_entregada": 5641.1,
       "pct_urea": 96.33,
-      "ha_atendidas": 29092.0,
+      "ha_atendidas": 29093.0,
       "pct_ha": 96.37
     },
     "atenciones_por_fecha": {
@@ -16033,37 +16038,38 @@
       "2026-05-01": 3,
       "2026-04-26": 1,
       "2026-05-17": 1,
+      "2026-07-28": 1,
       "2026-05-24": 1,
       "2026-07-17": 1
     },
     "genero": {
-      "hombres": 11391,
+      "hombres": 11392,
       "mujeres": 6108
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
-        "derechohabientes": 8012,
-        "superficie": 13998.0,
-        "porcentaje": "48.1163%"
+        "derechohabientes": 8013,
+        "superficie": 13999.0,
+        "porcentaje": "48.1181%"
       },
       {
         "cultivo": "CAÑA DE AZUCAR",
         "derechohabientes": 7411,
         "superficie": 11179.0,
-        "porcentaje": "38.4264%"
+        "porcentaje": "38.4251%"
       },
       {
         "cultivo": "SORGO GRANO",
         "derechohabientes": 1749,
         "superficie": 3361.0,
-        "porcentaje": "11.5530%"
+        "porcentaje": "11.5526%"
       },
       {
         "cultivo": "ARROZ",
         "derechohabientes": 152,
         "superficie": 245.0,
-        "porcentaje": "0.8422%"
+        "porcentaje": "0.8421%"
       },
       {
         "cultivo": "AVENA GRANO",
@@ -16081,7 +16087,7 @@
         "cultivo": "TRIGO GRANO",
         "derechohabientes": 29,
         "superficie": 55.0,
-        "porcentaje": "0.1891%"
+        "porcentaje": "0.1890%"
       },
       {
         "cultivo": "CACAHUATE",
@@ -16110,7 +16116,7 @@
     ],
     "edades": {
       "18-30": 692,
-      "31-40": 1456,
+      "31-40": 1457,
       "41-50": 2533,
       "51-60": 3941,
       "61-70": 4236,
@@ -16138,7 +16144,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 245
+        "conteo": 246
       }
     ],
     "entregas_ceda": [
@@ -16288,7 +16294,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 44
+            "conteo": 45
           }
         ]
       },
@@ -22088,14 +22094,14 @@
       "hectareas": 190387.0
     },
     "avance": {
-      "atendidos": 111484,
-      "pct_derechohabientes": 95.18,
-      "dap_entregada": 26645.95,
-      "pct_dap": 95.33,
-      "urea_entregada": 27464.65,
-      "pct_urea": 95.32,
-      "ha_atendidas": 181468.0,
-      "pct_ha": 95.32
+      "atendidos": 111509,
+      "pct_derechohabientes": 95.2,
+      "dap_entregada": 26651.65,
+      "pct_dap": 95.35,
+      "urea_entregada": 27470.35,
+      "pct_urea": 95.34,
+      "ha_atendidas": 181506.0,
+      "pct_ha": 95.34
     },
     "atenciones_por_fecha": {
       "2026-05-11": 4251,
@@ -22167,60 +22173,61 @@
       "2026-07-24": 198,
       "2026-07-25": 123,
       "2026-07-06": 113,
+      "2026-07-28": 25,
       "2026-07-19": 1
     },
     "genero": {
-      "hombres": 65137,
-      "mujeres": 46347
+      "hombres": 65158,
+      "mujeres": 46351
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
-        "derechohabientes": 80262,
-        "superficie": 138066.0,
-        "porcentaje": "76.0828%"
+        "derechohabientes": 80278,
+        "superficie": 138093.0,
+        "porcentaje": "76.0818%"
       },
       {
         "cultivo": "CAFE",
-        "derechohabientes": 12397,
-        "superficie": 15133.0,
-        "porcentaje": "8.3392%"
+        "derechohabientes": 12406,
+        "superficie": 15144.0,
+        "porcentaje": "8.3435%"
       },
       {
         "cultivo": "CAÑA DE AZUCAR",
         "derechohabientes": 6856,
         "superficie": 9074.0,
-        "porcentaje": "5.0003%"
+        "porcentaje": "4.9993%"
       },
       {
         "cultivo": "MILPA",
         "derechohabientes": 5511,
         "superficie": 7682.0,
-        "porcentaje": "4.2333%"
+        "porcentaje": "4.2324%"
       },
       {
         "cultivo": "FRIJOL",
         "derechohabientes": 1895,
         "superficie": 3298.0,
-        "porcentaje": "1.8174%"
+        "porcentaje": "1.8170%"
       },
       {
         "cultivo": "SORGO GRANO",
         "derechohabientes": 1310,
         "superficie": 2500.0,
-        "porcentaje": "1.3777%"
+        "porcentaje": "1.3774%"
       },
       {
         "cultivo": "CEBADA GRANO",
         "derechohabientes": 747,
         "superficie": 1470.0,
-        "porcentaje": "0.8101%"
+        "porcentaje": "0.8099%"
       },
       {
         "cultivo": "HORTALIZAS",
         "derechohabientes": 812,
         "superficie": 1351.0,
-        "porcentaje": "0.7445%"
+        "porcentaje": "0.7443%"
       },
       {
         "cultivo": "HABA GRANO",
@@ -22232,7 +22239,7 @@
         "cultivo": "AVENA GRANO",
         "derechohabientes": 314,
         "superficie": 603.0,
-        "porcentaje": "0.3323%"
+        "porcentaje": "0.3322%"
       },
       {
         "cultivo": "AMARANTO",
@@ -22244,7 +22251,7 @@
         "cultivo": "MAIZ ELOTERO",
         "derechohabientes": 325,
         "superficie": 464.0,
-        "porcentaje": "0.2557%"
+        "porcentaje": "0.2556%"
       },
       {
         "cultivo": "CACAHUATE",
@@ -22262,7 +22269,7 @@
         "cultivo": "CHIA",
         "derechohabientes": 70,
         "superficie": 105.0,
-        "porcentaje": "0.0579%"
+        "porcentaje": "0.0578%"
       },
       {
         "cultivo": "COLZA",
@@ -22297,11 +22304,11 @@
     ],
     "edades": {
       "18-30": 2371,
-      "31-40": 8319,
-      "41-50": 15648,
-      "51-60": 24036,
-      "61-70": 28352,
-      "71-80": 21474,
+      "31-40": 8321,
+      "41-50": 15653,
+      "51-60": 24042,
+      "61-70": 28359,
+      "71-80": 21479,
       "81-90": 9649,
       "91-100": 1598,
       "100-120": 37
@@ -22325,7 +22332,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 11240
+        "conteo": 11265
       }
     ],
     "entregas_ceda": [
@@ -23000,7 +23007,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 402
+            "conteo": 410
           }
         ]
       },
@@ -23250,7 +23257,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 144
+            "conteo": 150
           }
         ]
       },
@@ -23550,7 +23557,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 1103
+            "conteo": 1114
           }
         ]
       },
@@ -24120,14 +24127,14 @@
       "hectareas": 42436.0
     },
     "avance": {
-      "atendidos": 21641,
-      "pct_derechohabientes": 97.66,
-      "dap_entregada": 6009.1,
-      "pct_dap": 97.73,
-      "urea_entregada": 6402.6,
-      "pct_urea": 97.62,
-      "ha_atendidas": 41449.0,
-      "pct_ha": 97.67
+      "atendidos": 21643,
+      "pct_derechohabientes": 97.67,
+      "dap_entregada": 6009.7,
+      "pct_dap": 97.74,
+      "urea_entregada": 6403.2,
+      "pct_urea": 97.63,
+      "ha_atendidas": 41453.0,
+      "pct_ha": 97.68
     },
     "atenciones_por_fecha": {
       "2026-05-12": 1458,
@@ -24200,39 +24207,40 @@
       "2026-07-15": 4,
       "2026-05-24": 3,
       "2026-07-22": 3,
+      "2026-07-28": 2,
       "2026-07-12": 2,
       "2026-07-23": 2,
       "2026-06-07": 1,
       "2026-06-28": 1
     },
     "genero": {
-      "hombres": 13939,
-      "mujeres": 7702
+      "hombres": 13940,
+      "mujeres": 7703
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
-        "derechohabientes": 12480,
-        "superficie": 23809.0,
-        "porcentaje": "57.4417%"
+        "derechohabientes": 12482,
+        "superficie": 23813.0,
+        "porcentaje": "57.4458%"
       },
       {
         "cultivo": "MILPA",
         "derechohabientes": 7003,
         "superficie": 13469.0,
-        "porcentaje": "32.4954%"
+        "porcentaje": "32.4922%"
       },
       {
         "cultivo": "CAÑA DE AZUCAR",
         "derechohabientes": 2029,
         "superficie": 3935.0,
-        "porcentaje": "9.4936%"
+        "porcentaje": "9.4927%"
       },
       {
         "cultivo": "FRIJOL",
         "derechohabientes": 126,
         "superficie": 230.0,
-        "porcentaje": "0.5549%"
+        "porcentaje": "0.5548%"
       },
       {
         "cultivo": "CALABAZA (SEMILLA) O CHIHUA",
@@ -24257,8 +24265,8 @@
       "18-30": 1726,
       "31-40": 3617,
       "41-50": 4489,
-      "51-60": 4809,
-      "61-70": 3629,
+      "51-60": 4810,
+      "61-70": 3630,
       "71-80": 2424,
       "81-90": 828,
       "91-100": 114,
@@ -24283,7 +24291,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 822
+        "conteo": 824
       }
     ],
     "entregas_ceda": [
@@ -24533,7 +24541,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 119
+            "conteo": 120
           }
         ]
       },
@@ -24658,7 +24666,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 36
+            "conteo": 37
           }
         ]
       }
@@ -25934,14 +25942,14 @@
       "hectareas": 397933.0
     },
     "avance": {
-      "atendidos": 45198,
-      "pct_derechohabientes": 75.57,
-      "dap_entregada": 43010.8,
+      "atendidos": 45200,
+      "pct_derechohabientes": 75.58,
+      "dap_entregada": 43012.9,
       "pct_dap": 74.95,
-      "urea_entregada": 44604.9,
-      "pct_urea": 74.13,
-      "ha_atendidas": 296478.0,
-      "pct_ha": 74.5
+      "urea_entregada": 44607.0,
+      "pct_urea": 74.14,
+      "ha_atendidas": 296492.0,
+      "pct_ha": 74.51
     },
     "atenciones_por_fecha": {
       "2026-05-04": 1231,
@@ -26027,65 +26035,65 @@
       "2026-06-21": 9,
       "2026-06-28": 8,
       "2026-05-31": 7,
+      "2026-07-28": 6,
       "2026-07-26": 5,
-      "2026-07-28": 4,
       "2026-07-19": 3,
       "2026-07-05": 2,
       "2026-07-12": 1,
       "2026-04-30": 1
     },
     "genero": {
-      "hombres": 30034,
-      "mujeres": 15164
+      "hombres": 30035,
+      "mujeres": 15165
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
-        "derechohabientes": 29402,
-        "superficie": 187373.0,
-        "porcentaje": "63.1996%"
+        "derechohabientes": 29404,
+        "superficie": 187387.0,
+        "porcentaje": "63.2014%"
       },
       {
         "cultivo": "SORGO GRANO",
         "derechohabientes": 7432,
         "superficie": 53253.0,
-        "porcentaje": "17.9619%"
+        "porcentaje": "17.9610%"
       },
       {
         "cultivo": "FRIJOL",
         "derechohabientes": 1870,
         "superficie": 13304.0,
-        "porcentaje": "4.4873%"
+        "porcentaje": "4.4871%"
       },
       {
         "cultivo": "AJONJOLI GRANO",
         "derechohabientes": 1833,
         "superficie": 12479.0,
-        "porcentaje": "4.2091%"
+        "porcentaje": "4.2089%"
       },
       {
         "cultivo": "MILPA",
         "derechohabientes": 1612,
         "superficie": 8238.0,
-        "porcentaje": "2.7786%"
+        "porcentaje": "2.7785%"
       },
       {
         "cultivo": "TRIGO GRANO",
         "derechohabientes": 929,
         "superficie": 7096.0,
-        "porcentaje": "2.3934%"
+        "porcentaje": "2.3933%"
       },
       {
         "cultivo": "CACAHUATE",
         "derechohabientes": 912,
         "superficie": 5618.0,
-        "porcentaje": "1.8949%"
+        "porcentaje": "1.8948%"
       },
       {
         "cultivo": "GARBANZO GRANO",
         "derechohabientes": 486,
         "superficie": 3963.0,
-        "porcentaje": "1.3367%"
+        "porcentaje": "1.3366%"
       },
       {
         "cultivo": "CARTAMO GRANO",
@@ -26121,7 +26129,7 @@
     "edades": {
       "18-30": 2540,
       "31-40": 3884,
-      "41-50": 6274,
+      "41-50": 6276,
       "51-60": 9472,
       "61-70": 9737,
       "71-80": 8482,
@@ -26148,7 +26156,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 8744
+        "conteo": 8746
       }
     ],
     "entregas_ceda": [
@@ -26523,7 +26531,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 721
+            "conteo": 723
           }
         ]
       },
@@ -29582,14 +29590,14 @@
       "hectareas": 266114.0
     },
     "avance": {
-      "atendidos": 168691,
-      "pct_derechohabientes": 97.24,
-      "dap_entregada": 22092.0,
-      "pct_dap": 97.19,
-      "urea_entregada": 55416.8,
-      "pct_urea": 97.17,
-      "ha_atendidas": 258609.0,
-      "pct_ha": 97.18
+      "atendidos": 168719,
+      "pct_derechohabientes": 97.26,
+      "dap_entregada": 22097.2,
+      "pct_dap": 97.22,
+      "urea_entregada": 55427.2,
+      "pct_urea": 97.19,
+      "ha_atendidas": 258661.0,
+      "pct_ha": 97.2
     },
     "atenciones_por_fecha": {
       "2026-03-31": 4324,
@@ -29699,8 +29707,9 @@
       "2026-07-05": 163,
       "2026-07-19": 142,
       "2026-06-14": 109,
-      "2026-07-27": 40,
+      "2026-07-27": 42,
       "2026-06-28": 33,
+      "2026-07-28": 26,
       "2026-05-17": 25,
       "2026-07-25": 5,
       "2026-06-21": 4,
@@ -29708,45 +29717,45 @@
       "2026-07-24": 3
     },
     "genero": {
-      "hombres": 105392,
-      "mujeres": 63299
+      "hombres": 105407,
+      "mujeres": 63312
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
         "derechohabientes": 74497,
         "superficie": 125920.0,
-        "porcentaje": "48.6913%"
+        "porcentaje": "48.6815%"
       },
       {
         "cultivo": "CAÑA DE AZUCAR",
-        "derechohabientes": 53593,
-        "superficie": 81322.0,
-        "porcentaje": "31.4459%"
+        "derechohabientes": 53621,
+        "superficie": 81374.0,
+        "porcentaje": "31.4597%"
       },
       {
         "cultivo": "CAFE",
         "derechohabientes": 35783,
         "superficie": 44123.0,
-        "porcentaje": "17.0617%"
+        "porcentaje": "17.0582%"
       },
       {
         "cultivo": "MILPA",
         "derechohabientes": 3918,
         "superficie": 5631.0,
-        "porcentaje": "2.1774%"
+        "porcentaje": "2.1770%"
       },
       {
         "cultivo": "FRIJOL",
         "derechohabientes": 450,
         "superficie": 743.0,
-        "porcentaje": "0.2873%"
+        "porcentaje": "0.2872%"
       },
       {
         "cultivo": "SORGO GRANO",
         "derechohabientes": 235,
         "superficie": 469.0,
-        "porcentaje": "0.1814%"
+        "porcentaje": "0.1813%"
       },
       {
         "cultivo": "SOYA GRANO",
@@ -29816,13 +29825,13 @@
       }
     ],
     "edades": {
-      "18-30": 5885,
-      "31-40": 16599,
-      "41-50": 28965,
-      "51-60": 41231,
-      "61-70": 39159,
-      "71-80": 25803,
-      "81-90": 9670,
+      "18-30": 5886,
+      "31-40": 16600,
+      "41-50": 28969,
+      "51-60": 41238,
+      "61-70": 39169,
+      "71-80": 25806,
+      "81-90": 9672,
       "91-100": 1340,
       "100-120": 39
     },
@@ -29845,7 +29854,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 18056
+        "conteo": 18084
       }
     ],
     "entregas_ceda": [
@@ -30145,7 +30154,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 1709
+            "conteo": 1735
           }
         ]
       },
@@ -30745,7 +30754,7 @@
           },
           {
             "mes": "jul",
-            "conteo": 445
+            "conteo": 447
           }
         ]
       },
@@ -32935,14 +32944,14 @@
       "hectareas": 3517160.0
     },
     "avance": {
-      "atendidos": 2018633,
-      "pct_derechohabientes": 95.01,
-      "dap_entregada": 405414.6,
-      "pct_dap": 92.62,
-      "urea_entregada": 552915.5,
+      "atendidos": 2018824,
+      "pct_derechohabientes": 95.02,
+      "dap_entregada": 405457.9,
+      "pct_dap": 92.63,
+      "urea_entregada": 552967.1,
       "pct_urea": 93.37,
-      "ha_atendidas": 3266246.0,
-      "pct_ha": 92.87
+      "ha_atendidas": 3266563.0,
+      "pct_ha": 92.88
     },
     "atenciones_por_fecha": {
       "2026-05-08": 34194,
@@ -33036,7 +33045,7 @@
       "2026-07-01": 10771,
       "2026-03-14": 10176,
       "2026-06-26": 10121,
-      "2026-07-27": 9814,
+      "2026-07-27": 9914,
       "2026-06-13": 9789,
       "2026-07-24": 8978,
       "2026-06-22": 8903,
@@ -33082,6 +33091,7 @@
       "2026-07-05": 194,
       "2026-07-19": 180,
       "2026-05-31": 103,
+      "2026-07-28": 100,
       "2026-03-15": 92,
       "2026-03-08": 91,
       "2026-05-24": 89,
@@ -33090,61 +33100,60 @@
       "2026-07-26": 18,
       "2026-04-26": 13,
       "2026-03-29": 10,
-      "2026-07-28": 9,
       "2023-03-06": 1
     },
     "genero": {
-      "hombres": 1211503,
-      "mujeres": 807129
+      "hombres": 1211616,
+      "mujeres": 807207
     },
     "cultivos": [
       {
         "cultivo": "MAIZ",
-        "derechohabientes": 1383168,
-        "superficie": 2230716.0,
-        "porcentaje": "68.2960%"
+        "derechohabientes": 1383298,
+        "superficie": 2230930.0,
+        "porcentaje": "68.2959%"
       },
       {
         "cultivo": "MILPA",
-        "derechohabientes": 159215,
-        "superficie": 237997.0,
+        "derechohabientes": 159228,
+        "superficie": 238021.0,
         "porcentaje": "7.2866%"
       },
       {
         "cultivo": "FRIJOL",
-        "derechohabientes": 103516,
-        "superficie": 204518.0,
-        "porcentaje": "6.2616%"
+        "derechohabientes": 103518,
+        "superficie": 204521.0,
+        "porcentaje": "6.2610%"
       },
       {
         "cultivo": "CAÑA DE AZUCAR",
-        "derechohabientes": 129859,
-        "superficie": 196239.0,
-        "porcentaje": "6.0081%"
+        "derechohabientes": 129889,
+        "superficie": 196294.0,
+        "porcentaje": "6.0092%"
       },
       {
         "cultivo": "CAFE",
-        "derechohabientes": 147170,
-        "superficie": 161468.0,
-        "porcentaje": "4.9435%"
+        "derechohabientes": 147185,
+        "superficie": 161487.0,
+        "porcentaje": "4.9436%"
       },
       {
         "cultivo": "SORGO GRANO",
         "derechohabientes": 36720,
         "superficie": 109504.0,
-        "porcentaje": "3.3526%"
+        "porcentaje": "3.3523%"
       },
       {
         "cultivo": "AVENA GRANO",
         "derechohabientes": 13251,
         "superficie": 25077.0,
-        "porcentaje": "0.7678%"
+        "porcentaje": "0.7677%"
       },
       {
         "cultivo": "TRIGO GRANO",
         "derechohabientes": 8915,
         "superficie": 22118.0,
-        "porcentaje": "0.6772%"
+        "porcentaje": "0.6771%"
       },
       {
         "cultivo": "CEBADA GRANO",
@@ -33174,7 +33183,7 @@
         "cultivo": "GARBANZO GRANO",
         "derechohabientes": 845,
         "superficie": 4663.0,
-        "porcentaje": "0.1428%"
+        "porcentaje": "0.1427%"
       },
       {
         "cultivo": "CARTAMO GRANO",
@@ -33184,9 +33193,9 @@
       },
       {
         "cultivo": "ARROZ",
-        "derechohabientes": 1551,
-        "superficie": 2732.0,
-        "porcentaje": "0.0836%"
+        "derechohabientes": 1552,
+        "superficie": 2734.0,
+        "porcentaje": "0.0837%"
       },
       {
         "cultivo": "SOYA GRANO",
@@ -33316,14 +33325,14 @@
       }
     ],
     "edades": {
-      "18-30": 92438,
-      "31-40": 235936,
-      "41-50": 342861,
-      "51-60": 442488,
-      "61-70": 437608,
-      "71-80": 309210,
-      "81-90": 136033,
-      "91-100": 21468,
+      "18-30": 92445,
+      "31-40": 235977,
+      "41-50": 342902,
+      "51-60": 442529,
+      "61-70": 437647,
+      "71-80": 309222,
+      "81-90": 136041,
+      "91-100": 21470,
       "100-120": 591
     },
     "entregas_mes": [
@@ -33345,7 +33354,7 @@
       },
       {
         "mes": "JUL",
-        "conteo": 148929
+        "conteo": 149120
       }
     ],
     "entregas_ceda": []

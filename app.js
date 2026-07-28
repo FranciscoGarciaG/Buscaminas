@@ -119,8 +119,8 @@ function updateDashboard() {
 
     // 2. Metas Section
     document.getElementById('meta-derechohabientes').textContent = formatNum(sdata.meta.productores);
-    document.getElementById('meta-urea').textContent = formatDec(sdata.meta.urea_ton, 3);
-    document.getElementById('meta-dap').textContent = formatDec(sdata.meta.dap_ton, 3);
+    const totalMetaFertilizante = (sdata.meta.dap_ton || 0) + (sdata.meta.urea_ton || 0);
+    document.getElementById('meta-fertilizante').textContent = formatDec(totalMetaFertilizante, 3);
     document.getElementById('meta-hectareas').textContent = formatNum(sdata.meta.hectareas);
 
     // 3. Avance Section Values
@@ -302,7 +302,7 @@ function renderEdadesChart(edades) {
                     },
                     offset: 6,
                     color: '#000000',
-                    font: { weight: '800', size: 10 },
+                    font: { weight: '700', size: 9.5 },
                     formatter: (v) => {
                         if (v === 0) return '';
                         if (useMil && v >= 1000) {
@@ -315,7 +315,7 @@ function renderEdadesChart(edades) {
             scales: {
                 x: {
                     grid: { display: false },
-                    ticks: { font: { size: 10.5, weight: '800' }, color: '#000000', maxRotation: 45, autoSkip: false }
+                    ticks: { font: { size: 9.5, weight: '700' }, color: '#000000', maxRotation: 45, autoSkip: false }
                 },
                 y: {
                     display: true,
@@ -323,7 +323,7 @@ function renderEdadesChart(edades) {
                     grace: '18%',
                     grid: { color: '#e5ded0', drawBorder: false },
                     ticks: {
-                        font: { size: 10, weight: '700' },
+                        font: { size: 9, weight: '600' },
                         color: '#444444',
                         callback: (v) => {
                             if (useMil) {
@@ -376,14 +376,14 @@ function renderEntregasChart(sdata) {
                     align: 'top',
                     offset: 4,
                     color: '#111111',
-                    font: { weight: 'bold', size: 10 },
+                    font: { weight: '700', size: 10 },
                     formatter: (v) => v > 0 ? formatNum(v) : ''
                 }
             },
             scales: {
                 x: {
                     grid: { color: '#e5ded0' },
-                    ticks: { font: { size: 10, weight: 'bold' } }
+                    ticks: { font: { size: 10, weight: '700' }, color: '#000000' }
                 },
                 y: {
                     display: false,
@@ -550,7 +550,7 @@ function exportToPDF() {
                             anchor: 'end',
                             align: 'top',
                             color: '#000000',
-                            font: { weight: '800', size: matchedHeight < 500 ? 14 : 16 },
+                            font: { weight: '800', size: matchedHeight < 500 ? 24 : 28 },
                             formatter: (v, ctx) => {
                                 const pct = ctx.dataIndex === 0 ? pctH : pctM;
                                 return `${formatNum(v)}\n(${pct}%)`;
@@ -559,7 +559,7 @@ function exportToPDF() {
                     },
                     scales: {
                         x: { 
-                            ticks: { font: { size: matchedHeight < 500 ? 14 : 17, weight: '800' }, color: '#000000' }, 
+                            ticks: { font: { size: matchedHeight < 500 ? 24 : 28, weight: '800' }, color: '#000000' }, 
                             grid: { display: false } 
                         },
                         y: { 
@@ -616,7 +616,7 @@ function exportToPDF() {
                             },
                             offset: 6,
                             color: '#000000',
-                            font: { weight: '800', size: matchedHeight < 500 ? 10 : 11.5 },
+                            font: { weight: '800', size: matchedHeight < 500 ? 20 : 24 },
                             formatter: (v) => {
                                 if (v === 0) return '';
                                 if (useMil && v >= 1000) {
@@ -629,7 +629,7 @@ function exportToPDF() {
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { font: { size: matchedHeight < 500 ? 10.5 : 12, weight: '800' }, color: '#000000', maxRotation: 45, autoSkip: false }
+                            ticks: { font: { size: matchedHeight < 500 ? 20 : 22, weight: '800' }, color: '#000000', maxRotation: 45, autoSkip: false }
                         },
                         y: {
                             display: true,
@@ -637,7 +637,7 @@ function exportToPDF() {
                             grace: '18%',
                             grid: { color: '#e5ded0', drawBorder: false },
                             ticks: {
-                                font: { size: matchedHeight < 500 ? 9.5 : 11, weight: '700' },
+                                font: { size: matchedHeight < 500 ? 16 : 18, weight: '800' },
                                 color: '#444444',
                                 callback: (v) => {
                                     if (useMil) {
@@ -698,16 +698,16 @@ function exportToPDF() {
                         legend: { display: false },
                         datalabels: {
                             align: 'top',
-                            offset: 6,
+                            offset: 8,
                             color: '#111111',
-                            font: { weight: '800', size: 14 },
+                            font: { weight: '800', size: 28 },
                             formatter: (v) => v > 0 ? formatNum(v) : ''
                         }
                     },
                     scales: {
                         x: {
                             grid: { color: '#e5ded0' },
-                            ticks: { font: { size: 13, weight: '800' }, color: '#000000' }
+                            ticks: { font: { size: 26, weight: '800' }, color: '#000000' }
                         },
                         y: {
                             display: false,
@@ -811,4 +811,313 @@ function formatFechaMexican(dateStr) {
         return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
     return dateStr;
+}
+
+// ==========================================================================
+// SURI Update System (GitHub Actions Cloud + Local Fallback)
+// ==========================================================================
+
+let updateEventSource = null;
+let isUpdating = false;
+
+async function triggerGitHubCloudUpdate() {
+    const patInput = document.getElementById('github-pat-input');
+    const pat = patInput ? patInput.value.trim() : '';
+
+    document.getElementById('update-login-section').style.display = 'none';
+    document.getElementById('update-progress-section').style.display = 'block';
+
+    const logEl = document.getElementById('update-log');
+    if (logEl) logEl.innerHTML = '';
+
+    updateProgressBar(25, 'Enviando orden a la nube...');
+    addLogEntry('☁️ Solicitando actualización remota a los servidores de GitHub Actions...', 'info');
+
+    const repoOwner = 'FranciscoGarciaG';
+    const repoName = 'Buscaminas';
+    const workflowId = 'update_suri.yml';
+
+    try {
+        const headers = { 'Accept': 'application/vnd.github.v3+json' };
+        if (pat) {
+            headers['Authorization'] = `token ${pat}`;
+        }
+
+        const resp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/${workflowId}/dispatches`, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({ ref: 'main' })
+        });
+
+        if (resp.ok || resp.status === 204) {
+            updateProgressBar(100, 'Servidor Nube Iniciado');
+            addLogEntry('🚀 ¡Servidor de GitHub Actions iniciado exitosamente!', 'success');
+            addLogEntry('⏳ Los servidores de GitHub están descargando los reportes SURI y procesando los datos.', 'info');
+            addLogEntry('🎉 El Dashboard y Posit Cloud se actualizarán automáticamente en ~2 minutos.', 'success');
+        } else {
+            updateProgressBar(75, 'Orden enviada');
+            addLogEntry('☁️ Solicitud enviada a la Nube.', 'info');
+            addLogEntry('💡 Para lanzar el workflow sin token, entra a la pestaña Actions en tu repositorio y presiona "Run workflow".', 'warning');
+        }
+    } catch (e) {
+        addLogEntry(`⚠️ Solicitud procesada: ${e.message}`, 'warning');
+        addLogEntry('💡 Recuerda que también puedes ejecutar el flujo con 1 clic desde la extensión GitHub Actions en tu IDE o la web de GitHub.', 'info');
+    }
+}
+
+function openUpdateModal() {
+    const modal = document.getElementById('update-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        // Reset to login view
+        document.getElementById('update-login-section').style.display = 'block';
+        document.getElementById('update-progress-section').style.display = 'none';
+        // Check if there's an active session
+        checkSURISession();
+    }
+}
+
+function closeUpdateModal() {
+    if (isUpdating) {
+        if (!confirm('¿Desea cerrar? La actualización continuará en segundo plano.')) return;
+    }
+    const modal = document.getElementById('update-modal');
+    if (modal) modal.style.display = 'none';
+    // Disconnect SSE if connected
+    if (updateEventSource) {
+        updateEventSource.close();
+        updateEventSource = null;
+    }
+}
+
+async function checkSURISession() {
+    const isCloud = window.location.hostname.includes('posit.cloud') || window.location.hostname.includes('rstudio');
+    const pill = document.getElementById('update-session-status');
+
+    if (isCloud) {
+        if (pill) {
+            pill.style.display = 'block';
+            pill.style.background = 'rgba(21, 78, 56, 0.12)';
+            pill.style.border = '1px solid #154e38';
+            pill.style.color = '#154e38';
+            pill.innerHTML = '☁️ <strong>Publicado en Posit Cloud</strong><br>Los datos de este dashboard corresponden al corte más reciente descargado y procesado de SURI. Para realizar descargas en vivo, ejecute el servidor en su equipo local.';
+        }
+        const startBtn = document.getElementById('btn-start-update');
+        if (startBtn) {
+            startBtn.style.display = 'none';
+        }
+        return;
+    }
+
+    try {
+        const resp = await fetch('/api/check-session');
+        if (resp.ok) {
+            const data = await resp.json();
+            if (data.active && pill) {
+                pill.style.display = 'block';
+                pill.innerHTML = '<span>✅ Sesión activa detectada — No requiere credenciales</span>';
+            }
+        }
+    } catch (e) {
+        // Local server not running
+    }
+}
+
+async function startUpdate() {
+    const usuario = document.getElementById('suri-usuario').value.trim();
+    const password = document.getElementById('suri-password').value.trim();
+
+    if (!usuario || !password) {
+        alert('Por favor ingrese usuario y contraseña del SURI.');
+        return;
+    }
+
+    isUpdating = true;
+
+    // Switch to progress view
+    document.getElementById('update-login-section').style.display = 'none';
+    document.getElementById('update-progress-section').style.display = 'block';
+
+    // Clear previous log
+    const logEl = document.getElementById('update-log');
+    if (logEl) logEl.innerHTML = '';
+
+    // Update progress bar to 0
+    updateProgressBar(0, 'Conectando...');
+
+    // Connect SSE for real-time progress
+    connectUpdateSSE();
+
+    // Trigger the update pipeline
+    try {
+        const resp = await fetch('/api/update-data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ usuario, password })
+        });
+        
+        if (!resp.ok) {
+            const errData = await resp.json().catch(() => ({}));
+            addLogEntry(`❌ Error: ${errData.detail || 'No se pudo iniciar la actualización'}`, 'error');
+            isUpdating = false;
+        }
+    } catch (e) {
+        addLogEntry(`❌ Error de conexión al servidor: ${e.message}`, 'error');
+        addLogEntry('💡 Asegúrese de iniciar el servidor con start_server.bat', 'warning');
+        isUpdating = false;
+    }
+}
+
+async function stopUpdate() {
+    try {
+        await fetch('/api/stop-update', { method: 'POST' });
+        addLogEntry('⛔ Solicitud de detención enviada...', 'warning');
+    } catch (e) {
+        addLogEntry(`Error al detener: ${e.message}`, 'error');
+    }
+}
+
+function connectUpdateSSE() {
+    if (updateEventSource) {
+        updateEventSource.close();
+    }
+
+    updateEventSource = new EventSource('/api/events');
+
+    updateEventSource.onmessage = function(event) {
+        try {
+            const data = JSON.parse(event.data);
+
+            if (data.type === 'heartbeat' || data.type === 'connected') return;
+
+            // Update progress bar
+            if (data.progress !== undefined && data.progress > 0) {
+                updateProgressBar(data.progress, data.step || '');
+            }
+
+            // Add log entry
+            if (data.message) {
+                addLogEntry(data.message, data.level || 'info');
+            }
+
+            // Update step label
+            if (data.step) {
+                updateStepLabel(data.step, data.message);
+            }
+
+            // Handle completion
+            if (data.type === 'complete') {
+                isUpdating = false;
+                updateProgressBar(100, 'complete');
+                document.getElementById('btn-stop-update').style.display = 'none';
+
+                // Reload dashboard data
+                addLogEntry('🔄 Recargando datos del dashboard...', 'info');
+                setTimeout(() => {
+                    reloadDashboardData();
+                }, 1500);
+            }
+
+            // Handle errors
+            if (data.level === 'error' && data.step === 'error') {
+                isUpdating = false;
+                document.getElementById('btn-stop-update').textContent = '← Volver';
+                document.getElementById('btn-stop-update').onclick = function() {
+                    document.getElementById('update-login-section').style.display = 'block';
+                    document.getElementById('update-progress-section').style.display = 'none';
+                    document.getElementById('btn-stop-update').textContent = '⛔ Detener';
+                    document.getElementById('btn-stop-update').onclick = stopUpdate;
+                    document.getElementById('btn-stop-update').style.display = 'block';
+                };
+            }
+        } catch (e) {
+            console.warn('SSE parse error:', e);
+        }
+    };
+
+    updateEventSource.onerror = function() {
+        // SSE connection lost, will auto-reconnect
+        console.warn('SSE connection interrupted, reconnecting...');
+    };
+}
+
+function updateProgressBar(percent, step) {
+    const bar = document.getElementById('update-progress-bar');
+    if (bar) {
+        bar.style.width = percent + '%';
+        bar.textContent = Math.round(percent) + '%';
+
+        // Color transitions
+        if (percent >= 100) {
+            bar.style.background = 'linear-gradient(135deg, #154e38, #1a7a56)';
+        } else if (percent >= 85) {
+            bar.style.background = 'linear-gradient(135deg, #b58c3a, #c9aa63)';
+        } else {
+            bar.style.background = 'linear-gradient(135deg, #691c32, #8c2a45)';
+        }
+    }
+}
+
+function updateStepLabel(step, message) {
+    const label = document.getElementById('update-step-label');
+    if (!label) return;
+
+    const stepLabels = {
+        'start': '🚀 Iniciando...',
+        'browser': '🌐 Navegador',
+        'login': '🔐 Inicio de Sesión',
+        'navigate': '📍 Navegación',
+        'clean': '🧹 Limpieza',
+        'download': '📥 Descargando Reportes',
+        'download_complete': '📊 Descarga Finalizada',
+        'processing': '⚙️ Procesando Datos',
+        'processing_done': '✅ Datos Procesados',
+        'complete': '🎉 ¡Actualización Completa!',
+        'error': '❌ Error',
+        'stopped': '⛔ Detenido',
+    };
+
+    label.textContent = stepLabels[step] || message || step;
+}
+
+function addLogEntry(message, level) {
+    const logEl = document.getElementById('update-log');
+    if (!logEl) return;
+
+    const entry = document.createElement('div');
+    entry.className = `log-entry log-${level}`;
+    
+    const time = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    entry.innerHTML = `<span class="log-time">[${time}]</span> ${message}`;
+
+    logEl.appendChild(entry);
+    logEl.scrollTop = logEl.scrollHeight;
+}
+
+async function reloadDashboardData() {
+    try {
+        // Try fetching from server API first, fallback to direct file
+        let resp;
+        try {
+            resp = await fetch('/api/data');
+        } catch (e) {
+            resp = await fetch('dashboard_data.json');
+        }
+
+        if (!resp.ok) throw new Error('Data reload failed');
+        
+        globalData = await resp.json();
+        populateStateDropdown();
+        updateDashboard();
+
+        addLogEntry('✅ Dashboard actualizado con los nuevos datos.', 'success');
+        document.getElementById('data-status').textContent = '🟢 Datos Actualizados';
+
+        // Close modal after a delay
+        setTimeout(() => {
+            closeUpdateModal();
+        }, 3000);
+    } catch (e) {
+        addLogEntry(`⚠️ Error recargando datos: ${e.message}`, 'warning');
+    }
 }

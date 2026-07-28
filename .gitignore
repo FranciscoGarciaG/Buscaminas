@@ -1,2 +1,6 @@
-"DBSURI/" 
-"CLOWNSURI/"DBSURI/*.CSV
+DBSURI/
+CLOWNSURI/
+browser_user_data/
+__pycache__/
+*.pyc
+dashboard_data.json
