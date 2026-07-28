@@ -395,7 +395,7 @@ function renderEntregasChart(sdata) {
     });
 }
 
-// FULLY ADAPTIVE PDF EXPORT HANDLER (Accurately measures unconstrained table height!)
+// Ultra High-Definition PDF Export Handler (100% PERFECT ON MOBILE & DESKTOP)
 function exportToPDF() {
     const btnPdf = document.getElementById('btn-export-pdf');
     const originalText = btnPdf ? btnPdf.textContent : '📄 Descargar PDF';
@@ -454,7 +454,7 @@ function exportToPDF() {
         wrapper.appendChild(clone);
         document.body.appendChild(wrapper);
 
-        // 3. MEASURE REAL UNCONSTRAINED TABLE HEIGHT FROM .cultivos-table (35 crops = ~760px -> card ~840px, 10 crops = ~260px -> card ~340px)
+        // 3. MEASURE REAL UNCONSTRAINED TABLE HEIGHT FROM .cultivos-table
         const tableEl = clone.querySelector('.cultivos-table');
         const realTableHeight = tableEl ? tableEl.offsetHeight + 80 : (cloneCardCultivos ? cloneCardCultivos.scrollHeight : 360);
         const matchedHeight = Math.max(340, realTableHeight);
@@ -508,8 +508,9 @@ function exportToPDF() {
             cloneCardCultivos.style.maxHeight = matchedHeight + 'px';
         }
 
-        // 4. Render ADAPTIVE VERTICAL BAR CHART for Gender in PDF!
         const sdata = globalData[currentState] || {};
+
+        // 4. Render ADAPTIVE VERTICAL BAR CHART for Gender in PDF!
         const genero = sdata.genero || { hombres: 0, mujeres: 0 };
         const hVal = genero.hombres || 0;
         const mVal = genero.mujeres || 0;
@@ -653,28 +654,91 @@ function exportToPDF() {
             });
         }
 
-        // Copy remaining canvases (Metas, Donut, Entregas) at High Resolution (2x scale)
-        const origCanvases = [
+        // 6. RE-RENDER ENTREGAS MENSUALES DIRECTLY ON CLONE CANVAS (100% Full Width on Phones & Mobile!)
+        const cloneEntregasCanvas = clone.querySelector('#chart-entregas');
+        if (cloneEntregasCanvas) {
+            const entregasMes = sdata.entregas_mes || [];
+            const labels = entregasMes.map(m => m.mes);
+            const pointsData = entregasMes.map(m => m.conteo);
+
+            const cloneEntregasContainer = clone.querySelector('.entregas-chart-container');
+            if (cloneEntregasContainer) {
+                cloneEntregasContainer.style.height = '240px';
+                cloneEntregasContainer.style.width = '100%';
+            }
+
+            cloneEntregasCanvas.width = 2300; // 1150px * 2 for ultra high resolution
+            cloneEntregasCanvas.height = 480;  // 240px * 2
+            cloneEntregasCanvas.style.width = '100%';
+            cloneEntregasCanvas.style.height = '240px';
+
+            new Chart(cloneEntregasCanvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Entregas',
+                        data: pointsData,
+                        borderColor: '#154e38',
+                        backgroundColor: '#154e38',
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        fill: false,
+                        tension: 0.2
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    layout: {
+                        padding: { top: 30, bottom: 10, left: 30, right: 30 }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                            align: 'top',
+                            offset: 6,
+                            color: '#111111',
+                            font: { weight: '800', size: 14 },
+                            formatter: (v) => v > 0 ? formatNum(v) : ''
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#e5ded0' },
+                            ticks: { font: { size: 13, weight: '800' }, color: '#000000' }
+                        },
+                        y: {
+                            display: false,
+                            beginAtZero: true,
+                            grace: '20%'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Copy remaining small Donut canvases at High Resolution (2x scale)
+        const origDonuts = [
             document.getElementById('chart-derechohabientes'),
             document.getElementById('chart-dap'),
             document.getElementById('chart-urea'),
-            document.getElementById('chart-ha'),
-            document.getElementById('chart-entregas')
+            document.getElementById('chart-ha')
         ];
 
-        const cloneCanvases = [
+        const cloneDonuts = [
             clone.querySelector('#chart-derechohabientes'),
             clone.querySelector('#chart-dap'),
             clone.querySelector('#chart-urea'),
-            clone.querySelector('#chart-ha'),
-            clone.querySelector('#chart-entregas')
+            clone.querySelector('#chart-ha')
         ];
 
-        origCanvases.forEach((origCanvas, idx) => {
-            if (origCanvas && cloneCanvases[idx]) {
-                const destCtx = cloneCanvases[idx].getContext('2d');
-                cloneCanvases[idx].width = origCanvas.width * 2;
-                cloneCanvases[idx].height = origCanvas.height * 2;
+        origDonuts.forEach((origCanvas, idx) => {
+            if (origCanvas && cloneDonuts[idx]) {
+                const destCtx = cloneDonuts[idx].getContext('2d');
+                cloneDonuts[idx].width = origCanvas.width * 2;
+                cloneDonuts[idx].height = origCanvas.height * 2;
                 destCtx.scale(2, 2);
                 destCtx.drawImage(origCanvas, 0, 0);
             }
