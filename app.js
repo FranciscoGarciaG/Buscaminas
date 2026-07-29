@@ -1,8 +1,12 @@
-// Fertilizantes para el Bienestar 2026 - Dashboard App Logic
+function getTodayYYYYMMDD() {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
-let globalData = {};
-let currentState = 'NACIONAL'; // Default to NACIONAL
-let selectedDate = '2026-07-27';
+let selectedDate = getTodayYYYYMMDD();
 
 // Chart Instances
 let chartDerechohabientes = null;
@@ -42,15 +46,9 @@ if (window.ChartDataLabels) {
 Chart.defaults.animation = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadData();
-
-    document.getElementById('state-select').addEventListener('change', (e) => {
-        currentState = e.target.value;
-        updateDashboard();
-    });
-
     const datePicker = document.getElementById('date-picker');
     if (datePicker) {
+        datePicker.value = selectedDate;
         ['change', 'input'].forEach(evt => {
             datePicker.addEventListener(evt, (e) => {
                 selectedDate = e.target.value;
@@ -58,6 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    loadData();
+
+    document.getElementById('state-select').addEventListener('change', (e) => {
+        currentState = e.target.value;
+        updateDashboard();
+    });
 
     const btnPdf = document.getElementById('btn-export-pdf');
     if (btnPdf) {
@@ -185,6 +190,11 @@ function updateDateAtencion() {
     document.getElementById('val-atendidos').textContent = formatNum(cumulativeAtendidos);
     document.getElementById('banner-subtitle').textContent = formatFechaMexican(selectedDate);
     document.getElementById('label-fecha-atencion').textContent = formatFechaMexican(selectedDate);
+
+    const lblTotal = document.getElementById('label-total-corte');
+    if (lblTotal) {
+        lblTotal.textContent = `Total a ${formatFechaMexican(selectedDate)}`;
+    }
 
     const singleDayCount = sdata.atenciones_por_fecha[selectedDate] || 0;
     document.getElementById('val-atendidos-fecha').textContent = formatNum(singleDayCount);
