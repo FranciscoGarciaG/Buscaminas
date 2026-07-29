@@ -159,7 +159,17 @@ def process_all_data():
         'dates': defaultdict(int),
         'months': defaultdict(int),
         'crops': defaultdict(lambda: {'count': 0, 'sup': 0.0}),
-        'cedas': defaultdict(lambda: defaultdict(int))
+        'cedas': defaultdict(lambda: defaultdict(int)),
+        'daily': defaultdict(lambda: {
+            'atendidos': 0,
+            'dap_sum': 0.0,
+            'urea_sum': 0.0,
+            'sup_sum': 0.0,
+            'hombres': 0,
+            'mujeres': 0,
+            'ages': defaultdict(int),
+            'crops': defaultdict(lambda: {'count': 0, 'sup': 0.0})
+        })
     })
 
     total_records_processed = 0
@@ -266,6 +276,59 @@ def process_all_data():
                         nat['crops'][c_clean]['count'] += c_cnt
                         nat['crops'][c_clean]['sup'] += c_sup
 
+                # Accumulate daily deltas for full dynamic date filtering
+                for f_str, f_grp in group.groupby('fecha_str'):
+                    if isinstance(f_str, str) and len(f_str) == 10 and f_str.startswith('202'):
+                        f_cnt = len(f_grp)
+                        f_dap = float(f_grp['dap_total_row'].sum())
+                        f_urea = float(f_grp['urea_total_row'].sum())
+                        f_sup = float(f_grp['superficie_apoyada'].sum())
+
+                        d_acc = acc['daily'][f_str]
+                        d_nat = nat['daily'][f_str]
+
+                        d_acc['atendidos'] += f_cnt
+                        d_acc['dap_sum'] += f_dap
+                        d_acc['urea_sum'] += f_urea
+                        d_acc['sup_sum'] += f_sup
+
+                        d_nat['atendidos'] += f_cnt
+                        d_nat['dap_sum'] += f_dap
+                        d_nat['urea_sum'] += f_urea
+                        d_nat['sup_sum'] += f_sup
+
+                        c_ser_f = f_grp['curp_val'].str.strip().str.upper()
+                        c_valid_f = c_ser_f[c_ser_f.str.len() == 18]
+                        if not c_valid_f.empty:
+                            g_f = c_valid_f.str[10]
+                            h_f = int((g_f == 'H').sum())
+                            m_f = int((g_f == 'M').sum())
+                            d_acc['hombres'] += h_f
+                            d_acc['mujeres'] += m_f
+                            d_nat['hombres'] += h_f
+                            d_nat['mujeres'] += m_f
+
+                            yy_f = pd.to_numeric(c_valid_f.str[4:6], errors='coerce')
+                            years_f = np.where(yy_f > 8, 1900 + yy_f, 2000 + yy_f)
+                            ages_f = 2026 - years_f
+                            age_cut_f = pd.cut(ages_f, bins=[17, 30, 40, 50, 60, 70, 80, 90, 100, 120], labels=['18-30', '31-40', '41-50', '51-60', '61-70', '71-80', '81-90', '91-100', '100-120'], right=True)
+                            for age_lbl_f, a_cnt_f in age_cut_f.value_counts().items():
+                                a_v_f = int(a_cnt_f)
+                                if a_v_f > 0:
+                                    d_acc['ages'][age_lbl_f] += a_v_f
+                                    d_nat['ages'][age_lbl_f] += a_v_f
+
+                        if 'cultivo_clean' in f_grp.columns:
+                            for c_name_f, c_sub_f in f_grp.groupby('cultivo_clean'):
+                                c_clean_f = str(c_name_f).upper()
+                                if c_clean_f:
+                                    c_cnt_f = len(c_sub_f)
+                                    c_sup_f = float(c_sub_f['superficie_apoyada'].sum())
+                                    d_acc['crops'][c_clean_f]['count'] += c_cnt_f
+                                    d_acc['crops'][c_clean_f]['sup'] += c_sup_f
+                                    d_nat['crops'][c_clean_f]['count'] += c_cnt_f
+                                    d_nat['crops'][c_clean_f]['sup'] += c_sup_f
+
                 if ceda_col:
                     for ceda_name, ceda_grp in group.groupby('ceda_val'):
                         if str(ceda_name).strip() and str(ceda_name).lower() != 'nan':
@@ -304,10 +367,25 @@ def process_all_data():
         cultivos_list = [{'cultivo': c_name, 'derechohabientes': c_data['count'], 'superficie': round(c_data['sup'], 1), 'porcentaje': f"{(100.0 * c_data['sup'] / sup_atendida if sup_atendida > 0 else 0.0):.4f}%"} for c_name, c_data in sorted(acc['crops'].items(), key=lambda x: x[1]['sup'], reverse=True)]
         entregas_mes = [{'mes': m.upper(), 'conteo': int(acc['months'].get(m, 0))} for m in ['mar', 'abr', 'may', 'jun', 'jul']]
         entregas_by_ceda = [{'ceda': ceda_name, 'puntos': [{'mes': m, 'conteo': int(c_counts.get(m, 0))} for m in ['mar', 'abr', 'may', 'jun', 'jul']]} for ceda_name, c_counts in acc['cedas'].items() if sum(int(c_counts.get(m, 0)) for m in ['mar', 'abr', 'may', 'jun', 'jul']) > 0]
+        
+        daily_formatted = {}
+        for d_str, d_data in sorted(acc['daily'].items()):
+            daily_formatted[d_str] = {
+                'atendidos': d_data['atendidos'],
+                'dap': round(d_data['dap_sum'], 3),
+                'urea': round(d_data['urea_sum'], 3),
+                'sup': round(d_data['sup_sum'], 1),
+                'hombres': d_data['hombres'],
+                'mujeres': d_data['mujeres'],
+                'ages': {k: int(d_data['ages'].get(k, 0)) for k in ['18-30', '31-40', '41-50', '51-60', '61-70', '71-80', '81-90', '91-100', '100-120']},
+                'crops': {c_k: {'count': c_v['count'], 'sup': round(c_v['sup'], 1)} for c_k, c_v in d_data['crops'].items()}
+            }
+
         data_by_state[state_key] = {
             'meta': {'productores': prod_meta, 'urea_ton': round(urea_meta, 3), 'dap_ton': round(dap_meta, 3), 'hectareas': round(sup_meta, 1)},
             'avance': {'atendidos': atendidos_total, 'pct_derechohabientes': pct_derechohabientes, 'dap_entregada': round(dap_entregada, 3), 'pct_dap': pct_dap, 'urea_entregada': round(urea_entregada, 3), 'pct_urea': pct_urea, 'ha_atendidas': round(sup_atendida, 1), 'pct_ha': pct_ha},
-            'atenciones_por_fecha': dict(acc['dates']), 'genero': gender_data, 'cultivos': cultivos_list, 'edades': age_counts, 'entregas_mes': entregas_mes, 'entregas_ceda': entregas_by_ceda
+            'atenciones_por_fecha': dict(acc['dates']), 'genero': gender_data, 'cultivos': cultivos_list, 'edades': age_counts, 'entregas_mes': entregas_mes, 'entregas_ceda': entregas_by_ceda,
+            'daily_metrics': daily_formatted
         }
     nat_acc = state_accum['NACIONAL']
     nat_atendidos, nat_dap_entregada, nat_urea_entregada, nat_ha_atendidas = nat_acc['atendidos'], nat_acc['dap_sum'], nat_acc['urea_sum'], nat_acc['sup_sum']
@@ -320,10 +398,25 @@ def process_all_data():
     nat_gender_data = {'hombres': nat_acc['hombres'], 'mujeres': nat_acc['mujeres']}
     nat_age_counts = {k: int(nat_acc['ages'].get(k, 0)) for k in ['18-30', '31-40', '41-50', '51-60', '61-70', '71-80', '81-90', '91-100', '100-120']}
     nat_cultivos_list = [{'cultivo': c_name, 'derechohabientes': c_data['count'], 'superficie': round(c_data['sup'], 1), 'porcentaje': f"{(100.0 * c_data['sup'] / nat_ha_atendidas if nat_ha_atendidas > 0 else 0.0):.4f}%"} for c_name, c_data in sorted(nat_acc['crops'].items(), key=lambda x: x[1]['sup'], reverse=True)]
+    
+    nat_daily_formatted = {}
+    for d_str, d_data in sorted(nat_acc['daily'].items()):
+        nat_daily_formatted[d_str] = {
+            'atendidos': d_data['atendidos'],
+            'dap': round(d_data['dap_sum'], 3),
+            'urea': round(d_data['urea_sum'], 3),
+            'sup': round(d_data['sup_sum'], 1),
+            'hombres': d_data['hombres'],
+            'mujeres': d_data['mujeres'],
+            'ages': {k: int(d_data['ages'].get(k, 0)) for k in ['18-30', '31-40', '41-50', '51-60', '61-70', '71-80', '81-90', '91-100', '100-120']},
+            'crops': {c_k: {'count': c_v['count'], 'sup': round(c_v['sup'], 1)} for c_k, c_v in d_data['crops'].items()}
+        }
+
     data_by_state['NACIONAL'] = {
         'meta': {'productores': nat_prod_meta, 'urea_ton': round(nat_urea_meta, 3), 'dap_ton': round(nat_dap_meta, 3), 'hectareas': round(nat_sup_meta, 1)},
         'avance': {'atendidos': nat_atendidos, 'pct_derechohabientes': round((100.0 / nat_prod_meta * nat_atendidos), 2) if nat_prod_meta > 0 else 0.0, 'dap_entregada': round(nat_dap_entregada, 3), 'pct_dap': round((100.0 / nat_dap_meta * nat_dap_entregada), 2) if nat_dap_meta > 0 else 0.0, 'urea_entregada': round(nat_urea_entregada, 3), 'pct_urea': round((100.0 / nat_urea_meta * nat_urea_entregada), 2) if nat_urea_meta > 0 else 0.0, 'ha_atendidas': round(nat_ha_atendidas, 1), 'pct_ha': round((100.0 / nat_sup_meta * nat_ha_atendidas), 2) if nat_sup_meta > 0 else 0.0},
-        'atenciones_por_fecha': dict(nat_acc['dates']), 'genero': nat_gender_data, 'cultivos': nat_cultivos_list, 'edades': nat_age_counts, 'entregas_mes': [{'mes': m.upper(), 'conteo': int(nat_acc['months'].get(m, 0))} for m in ['mar', 'abr', 'may', 'jun', 'jul']], 'entregas_ceda': []
+        'atenciones_por_fecha': dict(nat_acc['dates']), 'genero': nat_gender_data, 'cultivos': nat_cultivos_list, 'edades': nat_age_counts, 'entregas_mes': [{'mes': m.upper(), 'conteo': int(nat_acc['months'].get(m, 0))} for m in ['mar', 'abr', 'may', 'jun', 'jul']], 'entregas_ceda': [],
+        'daily_metrics': nat_daily_formatted
     }
     print(f"Writing updated JSON dataset to: {OUTPUT_JSON}")
     with open(OUTPUT_JSON, 'w', encoding='utf-8') as f:

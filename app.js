@@ -127,6 +127,97 @@ function populateStateDropdown() {
     });
 }
 
+function getMetricsForCutoffDate(sdata, cutoffDate) {
+    if (!sdata) return null;
+    const daily = sdata.daily_metrics || {};
+    const dates = Object.keys(daily).sort();
+    const maxDate = dates.length > 0 ? dates[dates.length - 1] : cutoffDate;
+
+    if (dates.length === 0 || cutoffDate >= maxDate) {
+        return {
+            atendidos: sdata.avance.atendidos,
+            pct_derechohabientes: sdata.avance.pct_derechohabientes,
+            dap_entregada: sdata.avance.dap_entregada,
+            pct_dap: sdata.avance.pct_dap,
+            urea_entregada: sdata.avance.urea_entregada,
+            pct_urea: sdata.avance.pct_urea,
+            ha_atendidas: sdata.avance.ha_atendidas,
+            pct_ha: sdata.avance.pct_ha,
+            genero: sdata.genero,
+            edades: sdata.edades,
+            cultivos: sdata.cultivos
+        };
+    }
+
+    let cumAtendidos = 0;
+    let cumDap = 0.0;
+    let cumUrea = 0.0;
+    let cumSup = 0.0;
+    let cumHombres = 0;
+    let cumMujeres = 0;
+    const cumAges = {'18-30': 0, '31-40': 0, '41-50': 0, '51-60': 0, '61-70': 0, '71-80': 0, '81-90': 0, '91-100': 0, '100-120': 0};
+    const cumCrops = {};
+
+    for (const dStr of dates) {
+        if (dStr <= cutoffDate) {
+            const d = daily[dStr];
+            cumAtendidos += (d.atendidos || 0);
+            cumDap += (d.dap || 0);
+            cumUrea += (d.urea || 0);
+            cumSup += (d.sup || 0);
+            cumHombres += (d.hombres || 0);
+            cumMujeres += (d.mujeres || 0);
+
+            if (d.ages) {
+                for (const [k, v] of Object.entries(d.ages)) {
+                    if (cumAges[k] !== undefined) cumAges[k] += (v || 0);
+                }
+            }
+
+            if (d.crops) {
+                for (const [cName, cObj] of Object.entries(d.crops)) {
+                    if (!cumCrops[cName]) cumCrops[cName] = { count: 0, sup: 0.0 };
+                    cumCrops[cName].count += (cObj.count || 0);
+                    cumCrops[cName].sup += (cObj.sup || 0);
+                }
+            }
+        }
+    }
+
+    const prodMeta = sdata.meta.productores || 0;
+    const dapMeta = sdata.meta.dap_ton || 0;
+    const ureaMeta = sdata.meta.urea_ton || 0;
+    const supMeta = sdata.meta.hectareas || 0;
+
+    const pct_derechohabientes = prodMeta > 0 ? Number(((100.0 / prodMeta) * cumAtendidos).toFixed(2)) : 0;
+    const pct_dap = dapMeta > 0 ? Number(((100.0 / dapMeta) * cumDap).toFixed(2)) : 0;
+    const pct_urea = ureaMeta > 0 ? Number(((100.0 / ureaMeta) * cumUrea).toFixed(2)) : 0;
+    const pct_ha = supMeta > 0 ? Number(((100.0 / supMeta) * cumSup).toFixed(2)) : 0;
+
+    const cultivosList = Object.entries(cumCrops)
+        .map(([cName, cData]) => ({
+            cultivo: cName,
+            derechohabientes: cData.count,
+            superficie: Number(cData.sup.toFixed(1)),
+            porcentaje: `${(cumSup > 0 ? (100.0 * cData.sup / cumSup) : 0).toFixed(4)}%`
+        }))
+        .sort((a, b) => b.superficie - a.superficie);
+
+    return {
+        atendidos: cumAtendidos,
+        pct_derechohabientes: pct_derechohabientes,
+        dap_entregada: Number(cumDap.toFixed(3)),
+        pct_dap: pct_dap,
+        urea_entregada: Number(cumUrea.toFixed(3)),
+        pct_urea: pct_urea,
+        ha_atendidas: Number(cumSup.toFixed(1)),
+        pct_ha: pct_ha,
+        genero: { hombres: cumHombres, mujeres: cumMujeres },
+        edades: cumAges,
+        cultivos: cultivosList
+    };
+}
+
 function updateDashboard() {
     if (!currentState) currentState = 'NACIONAL';
     const sdata = globalData[currentState];
@@ -150,26 +241,8 @@ function updateDashboard() {
     document.getElementById('meta-fertilizante').textContent = formatDec(totalMetaFertilizante, 3);
     document.getElementById('meta-hectareas').textContent = formatNum(sdata.meta.hectareas);
 
-    // 3. Avance Section Values
-    document.getElementById('val-dap').textContent = formatDec(sdata.avance.dap_entregada, 3);
-    document.getElementById('val-urea').textContent = formatDec(sdata.avance.urea_entregada, 3);
-    document.getElementById('val-ha').textContent = formatNum(sdata.avance.ha_atendidas);
-
-    const totalProdEntregado = (sdata.avance.dap_entregada || 0) + (sdata.avance.urea_entregada || 0);
-    document.getElementById('val-total-prod-entregado').textContent = formatDec(totalProdEntregado, 3);
-
-    // Render Donut Charts para Fertilizante y Hectareas
-    renderDonutChart('chart-dap', sdata.avance.pct_dap, '#8c1d35', (chart) => chartDap = chart, chartDap, 11);
-    renderDonutChart('chart-urea', sdata.avance.pct_urea, '#154e38', (chart) => chartUrea = chart, chartUrea, 11);
-    renderDonutChart('chart-ha', sdata.avance.pct_ha, '#a37a2c', (chart) => chartHa = chart, chartHa, 12);
-
-    // Date Atencion (Actualiza Totales Atendidos acum, dona de avance, fecha de corte y diario)
+    // Actualizar todas las secciones de avances, donas y desgloses dinámicamente según la fecha de atención
     updateDateAtencion();
-
-    // 4. Tri-Column Breakdown
-    renderGeneroChart(sdata.genero);
-    renderCultivosTable(sdata.cultivos, sdata.avance.atendidos, sdata.avance.ha_atendidas);
-    renderEdadesChart(sdata.edades);
 
     // 5. Entregas Chart
     renderEntregasChart(sdata);
@@ -179,32 +252,10 @@ function updateDateAtencion() {
     const sdata = globalData[currentState];
     if (!sdata) return;
 
-    const dates = Object.keys(sdata.atenciones_por_fecha || {}).sort();
-    const maxDate = dates.length > 0 ? dates[dates.length - 1] : selectedDate;
+    const metrics = getMetricsForCutoffDate(sdata, selectedDate);
+    if (!metrics) return;
 
-    // Calcular acumulado hasta la fecha seleccionada
-    let cumulativeAtendidos = 0;
-    if (dates.length > 0) {
-        for (const dStr of dates) {
-            if (dStr <= selectedDate) {
-                cumulativeAtendidos += (sdata.atenciones_por_fecha[dStr] || 0);
-            }
-        }
-    } else {
-        cumulativeAtendidos = sdata.avance.atendidos || 0;
-    }
-
-    // Si la fecha seleccionada es mayor o igual al maximo de fechas, usar el acumulado total exacto del estado
-    if (dates.length > 0 && selectedDate >= maxDate) {
-        cumulativeAtendidos = sdata.avance.atendidos;
-    }
-
-    // Calcular el porcentaje de avance dinamico a la fecha seleccionada
-    const metaProd = sdata.meta.productores || 0;
-    const pctAtendidos = metaProd > 0 ? Number(((100.0 / metaProd) * cumulativeAtendidos).toFixed(2)) : 0;
-
-    // Actualizar UI
-    document.getElementById('val-atendidos').textContent = formatNum(cumulativeAtendidos);
+    // 1. Fechas y Etiquetas
     document.getElementById('banner-subtitle').textContent = formatFechaMexican(selectedDate);
     document.getElementById('label-fecha-atencion').textContent = formatFechaMexican(selectedDate);
 
@@ -213,11 +264,28 @@ function updateDateAtencion() {
         lblTotal.textContent = `Total a ${formatFechaMexican(selectedDate)}`;
     }
 
-    const singleDayCount = sdata.atenciones_por_fecha[selectedDate] || 0;
+    const singleDayCount = (sdata.atenciones_por_fecha && sdata.atenciones_por_fecha[selectedDate]) || 0;
     document.getElementById('val-atendidos-fecha').textContent = formatNum(singleDayCount);
 
-    // Actualizar dona de porcentaje de Derechohabientes Atendidos a la fecha elegida
-    renderDonutChart('chart-derechohabientes', pctAtendidos, '#5a1727', (chart) => chartDerechohabientes = chart, chartDerechohabientes, 12);
+    // 2. Cifras de Avance
+    document.getElementById('val-atendidos').textContent = formatNum(metrics.atendidos);
+    document.getElementById('val-dap').textContent = formatDec(metrics.dap_entregada, 3);
+    document.getElementById('val-urea').textContent = formatDec(metrics.urea_entregada, 3);
+    document.getElementById('val-ha').textContent = formatNum(metrics.ha_atendidas);
+
+    const totalProdEntregado = metrics.dap_entregada + metrics.urea_entregada;
+    document.getElementById('val-total-prod-entregado').textContent = formatDec(totalProdEntregado, 3);
+
+    // 3. Renderizar las 4 donas de avance dinámicamente
+    renderDonutChart('chart-derechohabientes', metrics.pct_derechohabientes, '#5a1727', (chart) => chartDerechohabientes = chart, chartDerechohabientes, 12);
+    renderDonutChart('chart-dap', metrics.pct_dap, '#8c1d35', (chart) => chartDap = chart, chartDap, 11);
+    renderDonutChart('chart-urea', metrics.pct_urea, '#154e38', (chart) => chartUrea = chart, chartUrea, 11);
+    renderDonutChart('chart-ha', metrics.pct_ha, '#a37a2c', (chart) => chartHa = chart, chartHa, 12);
+
+    // 4. Renderizar desgloses tri-columna dinámicamente (Género, Cultivos y Edades)
+    renderGeneroChart(metrics.genero);
+    renderCultivosTable(metrics.cultivos, metrics.atendidos, metrics.ha_atendidas);
+    renderEdadesChart(metrics.edades);
 }
 
 // Donut Chart Helper with padding to prevent clipping
