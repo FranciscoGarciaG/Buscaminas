@@ -49,10 +49,15 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDashboard();
     });
 
-    document.getElementById('date-picker').addEventListener('change', (e) => {
-        selectedDate = e.target.value;
-        updateDateAtencion();
-    });
+    const datePicker = document.getElementById('date-picker');
+    if (datePicker) {
+        ['change', 'input'].forEach(evt => {
+            datePicker.addEventListener(evt, (e) => {
+                selectedDate = e.target.value;
+                updateDateAtencion();
+            });
+        });
+    }
 
     const btnPdf = document.getElementById('btn-export-pdf');
     if (btnPdf) {
@@ -124,7 +129,6 @@ function updateDashboard() {
     document.getElementById('meta-hectareas').textContent = formatNum(sdata.meta.hectareas);
 
     // 3. Avance Section Values
-    document.getElementById('val-atendidos').textContent = formatNum(sdata.avance.atendidos);
     document.getElementById('val-dap').textContent = formatDec(sdata.avance.dap_entregada, 3);
     document.getElementById('val-urea').textContent = formatDec(sdata.avance.urea_entregada, 3);
     document.getElementById('val-ha').textContent = formatNum(sdata.avance.ha_atendidas);
@@ -132,13 +136,12 @@ function updateDashboard() {
     const totalProdEntregado = (sdata.avance.dap_entregada || 0) + (sdata.avance.urea_entregada || 0);
     document.getElementById('val-total-prod-entregado').textContent = formatDec(totalProdEntregado, 3);
 
-    // Render Donut Charts
-    renderDonutChart('chart-derechohabientes', sdata.avance.pct_derechohabientes, '#5a1727', (chart) => chartDerechohabientes = chart, chartDerechohabientes, 12);
+    // Render Donut Charts para Fertilizante y Hectareas
     renderDonutChart('chart-dap', sdata.avance.pct_dap, '#8c1d35', (chart) => chartDap = chart, chartDap, 11);
     renderDonutChart('chart-urea', sdata.avance.pct_urea, '#154e38', (chart) => chartUrea = chart, chartUrea, 11);
     renderDonutChart('chart-ha', sdata.avance.pct_ha, '#a37a2c', (chart) => chartHa = chart, chartHa, 12);
 
-    // Date Atencion
+    // Date Atencion (Actualiza Totales Atendidos acum, dona de avance, fecha de corte y diario)
     updateDateAtencion();
 
     // 4. Tri-Column Breakdown
@@ -154,9 +157,40 @@ function updateDateAtencion() {
     const sdata = globalData[currentState];
     if (!sdata) return;
 
-    const count = sdata.atenciones_por_fecha[selectedDate] || 0;
-    document.getElementById('val-atendidos-fecha').textContent = formatNum(count);
+    const dates = Object.keys(sdata.atenciones_por_fecha || {}).sort();
+    const maxDate = dates.length > 0 ? dates[dates.length - 1] : selectedDate;
+
+    // Calcular acumulado hasta la fecha seleccionada
+    let cumulativeAtendidos = 0;
+    if (dates.length > 0) {
+        for (const dStr of dates) {
+            if (dStr <= selectedDate) {
+                cumulativeAtendidos += (sdata.atenciones_por_fecha[dStr] || 0);
+            }
+        }
+    } else {
+        cumulativeAtendidos = sdata.avance.atendidos || 0;
+    }
+
+    // Si la fecha seleccionada es mayor o igual al maximo de fechas, usar el acumulado total exacto del estado
+    if (dates.length > 0 && selectedDate >= maxDate) {
+        cumulativeAtendidos = sdata.avance.atendidos;
+    }
+
+    // Calcular el porcentaje de avance dinamico a la fecha seleccionada
+    const metaProd = sdata.meta.productores || 0;
+    const pctAtendidos = metaProd > 0 ? Number(((100.0 / metaProd) * cumulativeAtendidos).toFixed(2)) : 0;
+
+    // Actualizar UI
+    document.getElementById('val-atendidos').textContent = formatNum(cumulativeAtendidos);
+    document.getElementById('banner-subtitle').textContent = formatFechaMexican(selectedDate);
     document.getElementById('label-fecha-atencion').textContent = formatFechaMexican(selectedDate);
+
+    const singleDayCount = sdata.atenciones_por_fecha[selectedDate] || 0;
+    document.getElementById('val-atendidos-fecha').textContent = formatNum(singleDayCount);
+
+    // Actualizar dona de porcentaje de Derechohabientes Atendidos a la fecha elegida
+    renderDonutChart('chart-derechohabientes', pctAtendidos, '#5a1727', (chart) => chartDerechohabientes = chart, chartDerechohabientes, 12);
 }
 
 // Donut Chart Helper with padding to prevent clipping
