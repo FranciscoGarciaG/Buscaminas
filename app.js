@@ -72,15 +72,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadData() {
     try {
-        const resp = await fetch('dashboard_data.json');
+        let resp;
+        const antiCache = '?v=' + Date.now();
+        try {
+            resp = await fetch('/api/data' + antiCache);
+            if (!resp.ok) throw new Error();
+        } catch (e) {
+            resp = await fetch('dashboard_data.json' + antiCache);
+        }
+
         if (!resp.ok) throw new Error('Data file not found');
         globalData = await resp.json();
 
         populateStateDropdown();
         updateDashboard();
+
+        const statusEl = document.getElementById('data-status');
+        if (statusEl) statusEl.textContent = '🟢 Datos 2026 Cargados';
     } catch (err) {
         console.error('Error loading dataset:', err);
-        document.getElementById('data-status').textContent = '⚠️ Error cargando datos';
+        const statusEl = document.getElementById('data-status');
+        if (statusEl) statusEl.textContent = '⚠️ Error cargando datos';
     }
 }
 

@@ -104,8 +104,15 @@ async def upload_csv_files(files: List[UploadFile] = File(...)):
 
 
 # ============================================================================
-# Static File Serving (Dashboard)
+# Static File Serving (Dashboard) & API
 # ============================================================================
+
+@app.get("/api/data")
+async def get_dashboard_data():
+    """Servir el archivo JSON de datos del dashboard."""
+    if os.path.exists(DASHBOARD_JSON):
+        return FileResponse(DASHBOARD_JSON, media_type="application/json", headers={"Cache-Control": "no-cache"})
+    raise HTTPException(status_code=404, detail="dashboard_data.json no encontrado.")
 
 @app.get("/")
 async def serve_index():
