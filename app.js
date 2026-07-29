@@ -92,7 +92,13 @@ async function loadData() {
     } catch (err) {
         console.error('Error loading dataset:', err);
         const statusEl = document.getElementById('data-status');
-        if (statusEl) statusEl.textContent = '⚠️ Error cargando datos';
+        if (statusEl) {
+            if (window.location.protocol === 'file:') {
+                statusEl.textContent = '⚠️ Iniciar servidor http (doble clic en start_server.bat)';
+            } else {
+                statusEl.textContent = '⚠️ Error cargando datos (Pulse F5)';
+            }
+        }
     }
 }
 
