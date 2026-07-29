@@ -87,9 +87,9 @@ async def upload_csv_files(files: List[UploadFile] = File(...)):
     if not saved_files:
         raise HTTPException(status_code=400, detail="Ninguno de los archivos subidos es un archivo .csv válido.")
 
-    logger.info("Procesando datos con process_data.py...")
+    logger.info("Procesando datos con process_data.py en hilo secundario (non-blocking)...")
     try:
-        process_data.process_all_data()
+        await asyncio.to_thread(process_data.process_all_data)
         logger.info("✅ Procesamiento completado exitosamente.")
         return JSONResponse(content={
             "status": "ok",
