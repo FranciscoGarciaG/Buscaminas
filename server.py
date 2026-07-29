@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 import json
 import logging
 import asyncio
@@ -78,9 +79,8 @@ async def upload_csv_files(files: List[UploadFile] = File(...)):
             continue
         
         file_path = os.path.join(DBSURI_DIR, file.filename)
-        contents = await file.read()
         with open(file_path, "wb") as f:
-            f.write(contents)
+            shutil.copyfileobj(file.file, f)
         saved_files.append(file.filename)
         logger.info(f"Archivo guardado: {file.filename}")
 
