@@ -117,14 +117,10 @@ function updateDashboard() {
         : `Entregas en ${currentState} 2026`;
     document.getElementById('banner-title').textContent = titleText;
 
-    // Pick max date if available
-    const dates = Object.keys(sdata.atenciones_por_fecha || {}).sort();
-    const maxDate = dates.length > 0 ? dates[dates.length - 1] : selectedDate;
-    document.getElementById('banner-subtitle').textContent = formatFechaMexican(maxDate);
-
-    if (dates.length > 0 && !dates.includes(selectedDate)) {
-        selectedDate = maxDate;
-        document.getElementById('date-picker').value = selectedDate;
+    // Asegurar que el date-picker mantenga la fecha seleccionada (por defecto hoy)
+    const dp = document.getElementById('date-picker');
+    if (dp && dp.value !== selectedDate) {
+        dp.value = selectedDate;
     }
 
     // 2. Metas Section
