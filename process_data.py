@@ -165,122 +165,119 @@ def process_all_data():
     total_records_processed = 0
 
     for f in active_files:
-        print(f"Streaming dataset: {os.path.basename(f)}...")
+        print(f"Streaming dataset in 50k chunks: {os.path.basename(f)}...")
         header = pd.read_csv(f, encoding='utf-8-sig', nrows=0)
         col_map = {c: c.strip().lower() for c in header.columns}
         cols_to_use = [orig for orig, clean in col_map.items() if clean in required_cols]
-        df_sub = pd.read_csv(f, encoding='utf-8-sig', usecols=cols_to_use, low_memory=False)
-        df_sub.columns = [c.strip().lower() for c in df_sub.columns]
         
-        if 'estado_predio_capturada' not in df_sub.columns:
+        for df_sub in pd.read_csv(f, encoding='utf-8-sig', usecols=cols_to_use, chunksize=50000, low_memory=False):
+            df_sub.columns = [c.strip().lower() for c in df_sub.columns]
+            
+            if 'estado_predio_capturada' not in df_sub.columns:
+                continue
+
+            df_sub['estado_clean'] = df_sub['estado_predio_capturada'].apply(clean_state_name)
+            total_records_processed += len(df_sub)
+
+            if 'superficie_apoyada' in df_sub.columns:
+                df_sub['superficie_apoyada'] = pd.to_numeric(df_sub['superficie_apoyada'], errors='coerce').fillna(0.0)
+                mask_1ha = df_sub['estado_clean'].isin(['CHIAPAS', 'OAXACA'])
+                df_sub.loc[mask_1ha, 'superficie_apoyada'] = np.minimum(df_sub.loc[mask_1ha, 'superficie_apoyada'], 1.0)
+            else:
+                df_sub['superficie_apoyada'] = 0.0
+
+            dap_ton = pd.to_numeric(df_sub['ton_dap_entregada'], errors='coerce').fillna(0.0) if 'ton_dap_entregada' in df_sub.columns else 0.0
+            dap_b25 = pd.to_numeric(df_sub['dap_25_kg_anio_actual'], errors='coerce').fillna(0.0) if 'dap_25_kg_anio_actual' in df_sub.columns else 0.0
+            dap_rem = pd.to_numeric(df_sub['dap_remanente_25_kg'], errors='coerce').fillna(0.0) if 'dap_remanente_25_kg' in df_sub.columns else 0.0
+            df_sub['dap_total_row'] = np.maximum(dap_ton, (dap_b25 + dap_rem) * 25.0 / 1000.0)
+
+            urea_ton = pd.to_numeric(df_sub['ton_urea_entregada'], errors='coerce').fillna(0.0) if 'ton_urea_entregada' in df_sub.columns else 0.0
+            urea_b25 = pd.to_numeric(df_sub['urea_25_kg_anio_actual'], errors='coerce').fillna(0.0) if 'urea_25_kg_anio_actual' in df_sub.columns else 0.0
+            urea_rem = pd.to_numeric(df_sub['urea_remanente_25_kg'], errors='coerce').fillna(0.0) if 'urea_remanente_25_kg' in df_sub.columns else 0.0
+            df_sub['urea_total_row'] = np.maximum(urea_ton, (urea_b25 + urea_rem) * 25.0 / 1000.0)
+
+            if 'fecha_entrega' in df_sub.columns:
+                df_sub['fecha_str'] = df_sub['fecha_entrega'].astype(str).str.slice(0, 10)
+            else:
+                df_sub['fecha_str'] = ''
+
+            curp_col = 'curp_renapo' if 'curp_renapo' in df_sub.columns else ('curp_solicitud' if 'curp_solicitud' in df_sub.columns else None)
+            df_sub['curp_val'] = df_sub[curp_col].astype(str) if curp_col else ''
+            if 'cultivo' in df_sub.columns:
+                df_sub['cultivo_clean'] = df_sub['cultivo'].apply(clean_crop_name)
+            else:
+                df_sub['cultivo_clean'] = ''
+            ceda_col = 'cdf_entrega' if 'cdf_entrega' in df_sub.columns else None
+            df_sub['ceda_val'] = df_sub[ceda_col].astype(str) if ceda_col else ''
+
+            for state_key, group in df_sub.groupby('estado_clean'):
+                acc = state_accum[state_key]
+                nat = state_accum['NACIONAL']
+                cnt = len(group)
+                dap_s = float(group['dap_total_row'].sum())
+                urea_s = float(group['urea_total_row'].sum())
+                sup_s = float(group['superficie_apoyada'].sum())
+                acc['atendidos'] += cnt
+                acc['dap_sum'] += dap_s
+                acc['urea_sum'] += urea_s
+                acc['sup_sum'] += sup_s
+                nat['atendidos'] += cnt
+                nat['dap_sum'] += dap_s
+                nat['urea_sum'] += urea_s
+                nat['sup_sum'] += sup_s
+
+                c_ser = group['curp_val'].str.strip().str.upper()
+                c_valid = c_ser[c_ser.str.len() == 18]
+                if not c_valid.empty:
+                    g = c_valid.str[10]
+                    h_cnt = int((g == 'H').sum())
+                    m_cnt = int((g == 'M').sum())
+                    acc['hombres'] += h_cnt
+                    acc['mujeres'] += m_cnt
+                    nat['hombres'] += h_cnt
+                    nat['mujeres'] += m_cnt
+
+                    yy = pd.to_numeric(c_valid.str[4:6], errors='coerce')
+                    years = np.where(yy > 8, 1900 + yy, 2000 + yy)
+                    ages = 2026 - years
+                    age_cut = pd.cut(ages, bins=[17, 30, 40, 50, 60, 70, 80, 90, 100, 120], labels=['18-30', '31-40', '41-50', '51-60', '61-70', '71-80', '81-90', '91-100', '100-120'], right=True)
+                    for age_lbl, a_cnt in age_cut.value_counts().items():
+                        acc['ages'][age_lbl] += int(a_cnt)
+                        nat['ages'][age_lbl] += int(a_cnt)
+
+                for f_str, f_cnt in group['fecha_str'].value_counts().items():
+                    if isinstance(f_str, str) and len(f_str) == 10 and f_str.startswith('202'):
+                        acc['dates'][f_str] += int(f_cnt)
+                        nat['dates'][f_str] += int(f_cnt)
+                        m_idx = f_str[5:7]
+                        m_map = {'03': 'mar', '04': 'abr', '05': 'may', '06': 'jun', '07': 'jul'}
+                        if m_idx in m_map:
+                            m_lbl = m_map[m_idx]
+                            acc['months'][m_lbl] += int(f_cnt)
+                            nat['months'][m_lbl] += int(f_cnt)
+
+                if 'cultivo_clean' in group.columns:
+                    for c_name, c_grp in group.groupby('cultivo_clean'):
+                        c_clean = str(c_name).upper()
+                        c_cnt = len(c_grp)
+                        c_sup = float(c_grp['superficie_apoyada'].sum())
+                        acc['crops'][c_clean]['count'] += c_cnt
+                        acc['crops'][c_clean]['sup'] += c_sup
+                        nat['crops'][c_clean]['count'] += c_cnt
+                        nat['crops'][c_clean]['sup'] += c_sup
+
+                if ceda_col:
+                    for ceda_name, ceda_grp in group.groupby('ceda_val'):
+                        if str(ceda_name).strip() and str(ceda_name).lower() != 'nan':
+                            for f_str, f_cnt in ceda_grp['fecha_str'].value_counts().items():
+                                if isinstance(f_str, str) and len(f_str) == 10 and f_str.startswith('202'):
+                                    m_idx = f_str[5:7]
+                                    m_map = {'03': 'mar', '04': 'abr', '05': 'may', '06': 'jun', '07': 'jul'}
+                                    if m_idx in m_map:
+                                        acc['cedas'][str(ceda_name)][m_map[m_idx]] += int(f_cnt)
+
             del df_sub
             gc.collect()
-            continue
-
-        df_sub['estado_clean'] = df_sub['estado_predio_capturada'].apply(clean_state_name)
-        total_records_processed += len(df_sub)
-
-        if 'superficie_apoyada' in df_sub.columns:
-            df_sub['superficie_apoyada'] = pd.to_numeric(df_sub['superficie_apoyada'], errors='coerce').fillna(0.0)
-            mask_1ha = df_sub['estado_clean'].isin(['CHIAPAS', 'OAXACA'])
-            df_sub.loc[mask_1ha, 'superficie_apoyada'] = np.minimum(df_sub.loc[mask_1ha, 'superficie_apoyada'], 1.0)
-        else:
-            df_sub['superficie_apoyada'] = 0.0
-
-        dap_ton = pd.to_numeric(df_sub['ton_dap_entregada'], errors='coerce').fillna(0.0) if 'ton_dap_entregada' in df_sub.columns else 0.0
-        dap_b25 = pd.to_numeric(df_sub['dap_25_kg_anio_actual'], errors='coerce').fillna(0.0) if 'dap_25_kg_anio_actual' in df_sub.columns else 0.0
-        dap_rem = pd.to_numeric(df_sub['dap_remanente_25_kg'], errors='coerce').fillna(0.0) if 'dap_remanente_25_kg' in df_sub.columns else 0.0
-        df_sub['dap_total_row'] = np.maximum(dap_ton, (dap_b25 + dap_rem) * 25.0 / 1000.0)
-
-        urea_ton = pd.to_numeric(df_sub['ton_urea_entregada'], errors='coerce').fillna(0.0) if 'ton_urea_entregada' in df_sub.columns else 0.0
-        urea_b25 = pd.to_numeric(df_sub['urea_25_kg_anio_actual'], errors='coerce').fillna(0.0) if 'urea_25_kg_anio_actual' in df_sub.columns else 0.0
-        urea_rem = pd.to_numeric(df_sub['urea_remanente_25_kg'], errors='coerce').fillna(0.0) if 'urea_remanente_25_kg' in df_sub.columns else 0.0
-        df_sub['urea_total_row'] = np.maximum(urea_ton, (urea_b25 + urea_rem) * 25.0 / 1000.0)
-
-        # Extracción ultrarápida de fechas sin parseo pesado de datetime
-        if 'fecha_entrega' in df_sub.columns:
-            df_sub['fecha_str'] = df_sub['fecha_entrega'].astype(str).str.slice(0, 10)
-        else:
-            df_sub['fecha_str'] = ''
-
-        curp_col = 'curp_renapo' if 'curp_renapo' in df_sub.columns else ('curp_solicitud' if 'curp_solicitud' in df_sub.columns else None)
-        df_sub['curp_val'] = df_sub[curp_col].astype(str) if curp_col else ''
-        if 'cultivo' in df_sub.columns:
-            df_sub['cultivo_clean'] = df_sub['cultivo'].apply(clean_crop_name)
-        else:
-            df_sub['cultivo_clean'] = ''
-        ceda_col = 'cdf_entrega' if 'cdf_entrega' in df_sub.columns else None
-        df_sub['ceda_val'] = df_sub[ceda_col].astype(str) if ceda_col else ''
-
-        for state_key, group in df_sub.groupby('estado_clean'):
-            acc = state_accum[state_key]
-            nat = state_accum['NACIONAL']
-            cnt = len(group)
-            dap_s = float(group['dap_total_row'].sum())
-            urea_s = float(group['urea_total_row'].sum())
-            sup_s = float(group['superficie_apoyada'].sum())
-            acc['atendidos'] += cnt
-            acc['dap_sum'] += dap_s
-            acc['urea_sum'] += urea_s
-            acc['sup_sum'] += sup_s
-            nat['atendidos'] += cnt
-            nat['dap_sum'] += dap_s
-            nat['urea_sum'] += urea_s
-            nat['sup_sum'] += sup_s
-
-            # Conteo directo de genero y edad sin guardar listas
-            c_ser = group['curp_val'].str.strip().str.upper()
-            c_valid = c_ser[c_ser.str.len() == 18]
-            if not c_valid.empty:
-                g = c_valid.str[10]
-                h_cnt = int((g == 'H').sum())
-                m_cnt = int((g == 'M').sum())
-                acc['hombres'] += h_cnt
-                acc['mujeres'] += m_cnt
-                nat['hombres'] += h_cnt
-                nat['mujeres'] += m_cnt
-
-                yy = pd.to_numeric(c_valid.str[4:6], errors='coerce')
-                years = np.where(yy > 8, 1900 + yy, 2000 + yy)
-                ages = 2026 - years
-                age_cut = pd.cut(ages, bins=[17, 30, 40, 50, 60, 70, 80, 90, 100, 120], labels=['18-30', '31-40', '41-50', '51-60', '61-70', '71-80', '81-90', '91-100', '100-120'], right=True)
-                for age_lbl, a_cnt in age_cut.value_counts().items():
-                    acc['ages'][age_lbl] += int(a_cnt)
-                    nat['ages'][age_lbl] += int(a_cnt)
-
-            for f_str, f_cnt in group['fecha_str'].value_counts().items():
-                if isinstance(f_str, str) and len(f_str) == 10 and f_str.startswith('202'):
-                    acc['dates'][f_str] += int(f_cnt)
-                    nat['dates'][f_str] += int(f_cnt)
-                    m_idx = f_str[5:7]
-                    m_map = {'03': 'mar', '04': 'abr', '05': 'may', '06': 'jun', '07': 'jul'}
-                    if m_idx in m_map:
-                        m_lbl = m_map[m_idx]
-                        acc['months'][m_lbl] += int(f_cnt)
-                        nat['months'][m_lbl] += int(f_cnt)
-
-            if 'cultivo_clean' in group.columns:
-                for c_name, c_grp in group.groupby('cultivo_clean'):
-                    c_clean = str(c_name).upper()
-                    c_cnt = len(c_grp)
-                    c_sup = float(c_grp['superficie_apoyada'].sum())
-                    acc['crops'][c_clean]['count'] += c_cnt
-                    acc['crops'][c_clean]['sup'] += c_sup
-                    nat['crops'][c_clean]['count'] += c_cnt
-                    nat['crops'][c_clean]['sup'] += c_sup
-
-            if ceda_col:
-                for ceda_name, ceda_grp in group.groupby('ceda_val'):
-                    if str(ceda_name).strip() and str(ceda_name).lower() != 'nan':
-                        for f_str, f_cnt in ceda_grp['fecha_str'].value_counts().items():
-                            if isinstance(f_str, str) and len(f_str) == 10 and f_str.startswith('202'):
-                                m_idx = f_str[5:7]
-                                m_map = {'03': 'mar', '04': 'abr', '05': 'may', '06': 'jun', '07': 'jul'}
-                                if m_idx in m_map:
-                                    acc['cedas'][str(ceda_name)][m_map[m_idx]] += int(f_cnt)
-
-        del df_sub
-        gc.collect()
 
     print(f"Successfully processed {total_records_processed:,} total beneficiary records in zero-list ultra-low RAM mode!")
     data_by_state = {}
