@@ -133,6 +133,9 @@ function getMetricsForCutoffDate(sdata, cutoffDate) {
     const dates = Object.keys(daily).sort();
     const maxDate = dates.length > 0 ? dates[dates.length - 1] : cutoffDate;
 
+    const monthMap = {'03': 'MAR', '04': 'ABR', '05': 'MAY', '06': 'JUN', '07': 'JUL'};
+    const cumMonths = {'MAR': 0, 'ABR': 0, 'MAY': 0, 'JUN': 0, 'JUL': 0};
+
     if (dates.length === 0 || cutoffDate >= maxDate) {
         return {
             atendidos: sdata.avance.atendidos,
@@ -145,7 +148,8 @@ function getMetricsForCutoffDate(sdata, cutoffDate) {
             pct_ha: sdata.avance.pct_ha,
             genero: sdata.genero,
             edades: sdata.edades,
-            cultivos: sdata.cultivos
+            cultivos: sdata.cultivos,
+            entregas_mes: sdata.entregas_mes
         };
     }
 
@@ -167,6 +171,12 @@ function getMetricsForCutoffDate(sdata, cutoffDate) {
             cumSup += (d.sup || 0);
             cumHombres += (d.hombres || 0);
             cumMujeres += (d.mujeres || 0);
+
+            const mIdx = dStr.slice(5, 7);
+            const mLbl = monthMap[mIdx];
+            if (mLbl) {
+                cumMonths[mLbl] += (d.atendidos || 0);
+            }
 
             if (d.ages) {
                 for (const [k, v] of Object.entries(d.ages)) {
@@ -203,6 +213,11 @@ function getMetricsForCutoffDate(sdata, cutoffDate) {
         }))
         .sort((a, b) => b.superficie - a.superficie);
 
+    const entregasMesList = ['MAR', 'ABR', 'MAY', 'JUN', 'JUL'].map(m => ({
+        mes: m,
+        conteo: cumMonths[m] || 0
+    }));
+
     return {
         atendidos: cumAtendidos,
         pct_derechohabientes: pct_derechohabientes,
@@ -214,7 +229,8 @@ function getMetricsForCutoffDate(sdata, cutoffDate) {
         pct_ha: pct_ha,
         genero: { hombres: cumHombres, mujeres: cumMujeres },
         edades: cumAges,
-        cultivos: cultivosList
+        cultivos: cultivosList,
+        entregas_mes: entregasMesList
     };
 }
 
@@ -241,11 +257,8 @@ function updateDashboard() {
     document.getElementById('meta-fertilizante').textContent = formatDec(totalMetaFertilizante, 3);
     document.getElementById('meta-hectareas').textContent = formatNum(sdata.meta.hectareas);
 
-    // Actualizar todas las secciones de avances, donas y desgloses dinámicamente según la fecha de atención
+    // Actualizar todas las secciones de avances, donas, desgloses y entregas mensualmente dinámicas según la fecha de atención
     updateDateAtencion();
-
-    // 5. Entregas Chart
-    renderEntregasChart(sdata);
 }
 
 function updateDateAtencion() {
@@ -286,6 +299,9 @@ function updateDateAtencion() {
     renderGeneroChart(metrics.genero);
     renderCultivosTable(metrics.cultivos, metrics.atendidos, metrics.ha_atendidas);
     renderEdadesChart(metrics.edades);
+
+    // 5. Renderizar gráfica de Entregas Mensuales dinámicamente a la fecha elegida
+    renderEntregasChart(metrics.entregas_mes);
 }
 
 // Donut Chart Helper with padding to prevent clipping
@@ -469,10 +485,10 @@ function renderEdadesChart(edades) {
     });
 }
 
-function renderEntregasChart(sdata) {
+function renderEntregasChart(entregasMesData) {
     if (chartEntregas) chartEntregas.destroy();
 
-    const entregasMes = sdata.entregas_mes || [];
+    const entregasMes = Array.isArray(entregasMesData) ? entregasMesData : (entregasMesData && entregasMesData.entregas_mes ? entregasMesData.entregas_mes : []);
     const labels = entregasMes.map(m => m.mes);
     const pointsData = entregasMes.map(m => m.conteo);
 
