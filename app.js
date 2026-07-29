@@ -6,6 +6,8 @@ function getTodayYYYYMMDD() {
     return `${year}-${month}-${day}`;
 }
 
+let globalData = {};
+let currentState = 'NACIONAL'; // Default to NACIONAL
 let selectedDate = getTodayYYYYMMDD();
 
 // Chart Instances
@@ -126,6 +128,7 @@ function populateStateDropdown() {
 }
 
 function updateDashboard() {
+    if (!currentState) currentState = 'NACIONAL';
     const sdata = globalData[currentState];
     if (!sdata) return;
 
